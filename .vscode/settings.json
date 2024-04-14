@@ -67,5 +67,6 @@
         "ilogtarget",
         "tradius",
         "wscale"
-    ]
+    ],
+    "dotnet.defaultSolution": "unity-titanfall.sln"
 }
