@@ -120,7 +120,7 @@ public class CharacterMovementGroundModule : CharacterMovementModule
     }
 
     public override bool ShouldRun()
-    {
+    {        
         _baseDeltaPosition = Vector3.zero;
         _baseDeltaRotation = Vector3.zero;
 

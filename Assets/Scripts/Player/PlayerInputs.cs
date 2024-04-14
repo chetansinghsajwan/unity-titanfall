@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class PlayerInputs : PlayerBehaviour
 {
-    protected Character _character;
+    protected Character _character = null;
+    protected CharacterMovement _characterMovement = null;
+    protected CharacterMovementGroundModule _characterMovementGroundModule = null;
     protected PlayerInteraction _playerInteraction;
 
     protected Vector2 _move = Vector2.zero;
@@ -25,7 +27,25 @@ public class PlayerInputs : PlayerBehaviour
 
     public override void OnPlayerPossess(Character character)
     {
+        if (character is null)
+        {
+            _character = null;
+            _characterMovement = null;
+            _characterMovementGroundModule = null;
+            return;
+        }
+        
         _character = character;
+        _characterMovement = _character.charMovement;
+
+        foreach (var module in _characterMovement.modules)
+        {
+            if (module is CharacterMovementGroundModule)
+            {
+                _characterMovementGroundModule = module as CharacterMovementGroundModule;
+                break;
+            }
+        }
     }
 
     public override void OnPlayerUpdate()
@@ -34,16 +54,15 @@ public class PlayerInputs : PlayerBehaviour
         {
             ProcessInputs();
 
-            CharacterMovement charMovement = _character.charMovement;
-            if (charMovement is not null)
+            if (_characterMovementGroundModule is not null)
             {
-                // charMovement.SetMoveVector(_move);
+                _characterMovementGroundModule.SetMoveVector(_move);
 
-                // if (_sprint) charMovement.StartSprint();
-                // if (_walk) charMovement.StartWalk();
-                // if (_jump) charMovement.StartJump();
-                // if (_crouch) charMovement.StartCrouch();
-                // if (_prone) charMovement.StartProne();
+                if (_sprint) _characterMovementGroundModule.Sprint();
+                if (_walk) _characterMovementGroundModule.Walk();
+                if (_jump) _characterMovementGroundModule.Jump();
+                if (_crouch) _characterMovementGroundModule.Crouch();
+                if (_prone) _characterMovementGroundModule.Prone();
             }
 
             CharacterView charView = _character.charView;

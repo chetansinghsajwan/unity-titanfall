@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88d6c3c7cb5d9258d89c081e86a46847, type: 3}
   m_Name: SwatGuy Movement GroundModule
   m_EditorClassIdentifier: 
-  checkDepth: 0
+  checkDepth: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -56,3 +56,38 @@ MonoBehaviour:
   crouchToStandTransitionSpeed: 8
   crouchMaintainVelocityOnSurface: 0
   crouchMaintainVelocityAlongSurface: 0
+  animStandIdle: {fileID: -203655887218126122, guid: ef66f6652088584488399ceb133bc011, type: 3}
+  animStandWalkForward: {fileID: -203655887218126122, guid: 8339ed85d11079444b13b2b41e3d0529, type: 3}
+  animStandWalkForwardLeft: {fileID: -203655887218126122, guid: db8c0c268cf97b44aa71e8bf4281d25a, type: 3}
+  animStandWalkForwardRight: {fileID: -203655887218126122, guid: 43951f9a9d5f6cf42931dea4a38aa27e, type: 3}
+  animStandWalkLeft: {fileID: -203655887218126122, guid: 63016cfc9d6a63d42ad9c4eb5cd511e5, type: 3}
+  animStandWalkRight: {fileID: -203655887218126122, guid: 2d5daca91b4cab74cbfb3529a7f088d3, type: 3}
+  animStandWalkBackward: {fileID: 0}
+  animStandWalkBackwardLeft: {fileID: 0}
+  animStandWalkBackwardRight: {fileID: 0}
+  animStandRunForward: {fileID: 0}
+  animStandRunForwardLeft: {fileID: 0}
+  animStandRunForwardRight: {fileID: 0}
+  animStandRunLeft: {fileID: 0}
+  animStandRunRight: {fileID: 0}
+  animStandRunBackward: {fileID: 0}
+  animStandRunBackwardLeft: {fileID: 0}
+  animStandRunBackwardRight: {fileID: 0}
+  animStandSprintForward: {fileID: 0}
+  animCrouchIdle: {fileID: 0}
+  animCrouchWalkForward: {fileID: 0}
+  animCrouchWalkForwardLeft: {fileID: 0}
+  animCrouchWalkForwardRight: {fileID: 0}
+  animCrouchWalkLeft: {fileID: 0}
+  animCrouchWalkRight: {fileID: 0}
+  animCrouchWalkBackward: {fileID: 0}
+  animCrouchWalkBackwardLeft: {fileID: 0}
+  animCrouchWalkBackwardRight: {fileID: 0}
+  animCrouchRunForward: {fileID: 0}
+  animCrouchRunForwardLeft: {fileID: 0}
+  animCrouchRunForwardRight: {fileID: 0}
+  animCrouchRunLeft: {fileID: 0}
+  animCrouchRunRight: {fileID: 0}
+  animCrouchRunBackward: {fileID: 0}
+  animCrouchRunBackwardLeft: {fileID: 0}
+  animCrouchRunBackwardRight: {fileID: 0}
