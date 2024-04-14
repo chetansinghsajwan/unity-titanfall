@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b44db164b89b4468a735b026189c13, type: 3}
   m_Name: SwatGuy
   m_EditorClassIdentifier: 
-  _characterName: Manny
-  _tppBody: {fileID: 0}
-  _fppBody: {fileID: 0}
-  _tppPrefab: {fileID: 6526974782931169490, guid: 79e02451be545264ba8f6991f17f127d, type: 3}
-  _fppPrefab: {fileID: 0}
-  _characterMass: 80
-  mGroundModuleSource: {fileID: 11400000, guid: 6da330a94796bcdbe86b456d35de8fa0, type: 2}
-  mAirModuleSource: {fileID: 11400000, guid: a0a6f765d1995540d9503c779e03d5d6, type: 2}
-  _avatar: {fileID: 9000000, guid: 15003a1bcee5a8a4fb2e8e608f16f035, type: 3}
-  _avatarMaskUpperBody: {fileID: 0}
-  _avatarMaskLowerBody: {fileID: 0}
+  characterName: Swat Guy
+  tppBody: {fileID: 0}
+  fppBody: {fileID: 0}
+  tppPrefab: {fileID: 6526974782931169490, guid: 79e02451be545264ba8f6991f17f127d, type: 3}
+  fppPrefab: {fileID: 0}
+  characterMass: 80
+  groundModuleSource: {fileID: 11400000, guid: 6da330a94796bcdbe86b456d35de8fa0, type: 2}
+  airModuleSource: {fileID: 11400000, guid: a0a6f765d1995540d9503c779e03d5d6, type: 2}
+  avatar: {fileID: 9000000, guid: 15003a1bcee5a8a4fb2e8e608f16f035, type: 3}
+  AvatarMaskUpperBody: {fileID: 0}
+  AvatarMaskLowerBody: {fileID: 0}

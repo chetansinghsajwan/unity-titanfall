@@ -132,7 +132,7 @@ public partial class CharacterAsset : DataAsset
 
         protected virtual Character Instantiate()
         {
-            var prefab = _source._tppPrefab;
+            var prefab = _source.tppPrefab;
             if (prefab is null)
             {
                 return null;

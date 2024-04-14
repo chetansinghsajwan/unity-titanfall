@@ -29,54 +29,43 @@ public partial class CharacterAsset : DataAsset
 
     [Space]
 
-    [Label("Character Name"), SerializeField]
-    protected string _characterName;
-    public string characterName => _characterName;
+    [SerializeField]
+    public string characterName;
 
-    [Label("Character TPP Body"), SerializeField]
-    protected GameObject _tppBody;
-    public GameObject tppBody => _tppBody;
+    [SerializeField]
+    public GameObject tppBody;
 
-    [Label("Character FPP Body"), SerializeField]
-    protected GameObject _fppBody;
-    public GameObject fppBody => _fppBody;
+    [SerializeField]
+    public GameObject fppBody;
 
-    [Label("Character TPP Prefab"), SerializeField]
-    protected GameObject _tppPrefab;
-    public GameObject tppPrefab => _tppPrefab;
+    [SerializeField]
+    public GameObject tppPrefab;
 
-    [Label("Character FPP Prefab"), SerializeField]
-    protected GameObject _fppPrefab;
-    public GameObject fppPrefab => _fppPrefab;
+    [SerializeField]
+    public GameObject fppPrefab;
 
-    [Label("Character Mass"), SerializeField, Min(0)]
-    protected float _characterMass;
-    public float characterMass => _characterMass;
+    [SerializeField, Min(0)]
+    public float characterMass;
 
     [Space, Header("CHARACTER MOVEMENT")]
 
-    [SerializeField, Label("Ground Module Source")]
-    protected CharacterMovementGroundModuleSource mGroundModuleSource;
-    public CharacterMovementGroundModuleSource groundModuleSource => mGroundModuleSource;
+    [SerializeField]
+    public CharacterMovementGroundModuleSource groundModuleSource;
 
-    [SerializeField, Label("Air Module Source")]
-    protected CharacterMovementAirModuleSource mAirModuleSource;
-    public CharacterMovementAirModuleSource airModuleSource => mAirModuleSource;
+    [SerializeField]
+    public CharacterMovementAirModuleSource airModuleSource;
 
     //////////////////////////////////////////////////////////////////
     /// Animations | BEGIN
 
     [Space, Header("CHARACTER ANIMATION")]
 
-    [Label("Avatar"), SerializeField]
-    protected Avatar _avatar;
-    public Avatar avatar => _avatar;
+    [SerializeField]
+    public Avatar avatar;
 
-    [Label("Avatar Mask Upper Body"), SerializeField]
-    protected Avatar _avatarMaskUpperBody;
-    public Avatar AvatarMaskUpperBody => _avatarMaskUpperBody;
+    [SerializeField]
+    public Avatar AvatarMaskUpperBody;
 
-    [Label("Avatar Mask Lower Body"), SerializeField]
-    protected Avatar _avatarMaskLowerBody;
-    public Avatar AvatarMaskLowerBody => _avatarMaskLowerBody;
+    [SerializeField]
+    public Avatar AvatarMaskLowerBody;
 }
