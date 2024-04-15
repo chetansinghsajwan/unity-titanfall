@@ -11,35 +11,24 @@ public partial class CharacterMovement : CharacterBehaviour
         _collider = GetComponent<CapsuleCollider>();
         _velocity = Vector3.zero;
 
-        CharacterAsset source = _character.source;
-        if (source is not null)
+        CharacterAsset charAsset = _character.charAsset;
+        if (charAsset is not null)
         {
-            _capsule = new VirtualCapsule();
-            _capsule.position = Vector3.zero;
-            _capsule.rotation = Quaternion.identity;
-            _capsule.height = 2f;
-            _capsule.radius = .5f;
-            // _capsule.layerMask = source.layerMask;
-            _capsule.queryTrigger = QueryTriggerInteraction.Ignore;
+            _capsule = new VirtualCapsule
+            {
+                position = Vector3.zero,
+                rotation = Quaternion.identity,
+                height = 2f,
+                radius = .5f,
+                layerMask = charAsset.groundLayer,
+                queryTrigger = QueryTriggerInteraction.Ignore
+            };
 
             var moduleList = new List<CharacterMovementModule>();
-            if (source.groundModuleSource is not null)
-            {
-                var groundModule = source.groundModuleSource.GetModule();
-                if (groundModule is not null)
-                {
-                    moduleList.Add(groundModule);
-                }
-            }
-
-            if (source.airModuleSource is not null)
-            {
-                var airModule = source.airModuleSource.GetModule();
-                if (airModule is not null)
-                {
-                    moduleList.Add(airModule);
-                }
-            }
+            var groundModule = new CharacterMovementGroundModule(charAsset);
+            var airModule = new CharacterMovementAirModule(charAsset);
+            moduleList.Add(groundModule);
+            moduleList.Add(airModule);
 
             _modules = moduleList.ToArray();
             foreach (var module in _modules)

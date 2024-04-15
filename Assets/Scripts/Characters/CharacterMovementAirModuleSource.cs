@@ -13,6 +13,6 @@ public class CharacterMovementAirModuleSource : CharacterMovementModuleSource
 
     public override CharacterMovementModule GetModule()
     {
-        return new CharacterMovementAirModule(this);
+        return new CharacterMovementAirModule(null);
     }
 }

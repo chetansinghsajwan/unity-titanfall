@@ -5,18 +5,18 @@ public class CharacterMovementAirModule : CharacterMovementModule
     protected const uint AIR_MAX_MOVE_ITERATIONS = 10;
     protected const float GRAVITY_MULTIPLIER = .05f;
 
-    public CharacterMovementAirModule(CharacterMovementAirModuleSource source)
+    public CharacterMovementAirModule(CharacterAsset charAsset)
     {
         // cache Data from CharacterDataSource
-        if (source is not null)
+        if (charAsset is not null)
         {
-            _gravityAcceleration = source.gravityAcceleration;
-            _gravityMaxSpeed = source.gravityMaxSpeed;
-            _minMoveDistance = source.minMoveDistance;
-            _moveSpeed = source.moveSpeed;
-            _moveAcceleration = source.moveAcceleration;
-            _jumpPower = source.jumpPower;
-            _maxJumpCount = source.maxJumpCount;
+            _gravityAcceleration = charAsset.airGravityAcceleration;
+            _gravityMaxSpeed = charAsset.airGravityMaxSpeed;
+            _minMoveDistance = charAsset.airMinMoveDistance;
+            _moveSpeed = charAsset.airMoveSpeed;
+            _moveAcceleration = charAsset.airMoveAcceleration;
+            _jumpPower = charAsset.airJumpPower;
+            _maxJumpCount = charAsset.airMaxJumpCount;
         }
     }
 
