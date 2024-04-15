@@ -7,12 +7,12 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CharacterMovement))]
 [RequireComponent(typeof(CharacterObjectHandler))]
 [RequireComponent(typeof(CharacterView))]
-[RequireComponent(typeof(CharacterAnimation))]
+[RequireComponent(typeof(CharacterPresentation))]
 public class Character : Equipable
 {
     public Character()
     {
-        _source = null;
+        _charAsset = null;
         _behaviours = new CharacterBehaviour[0];
         _charInitializer = null;
         _charBody = null;
@@ -20,7 +20,7 @@ public class Character : Equipable
         _charMovement = null;
         _charObjectHandler = null;
         _charView = null;
-        _charAnimation = null;
+        _charPresentation = null;
         _controller = null;
         _charMass = 0f;
     }
@@ -59,12 +59,12 @@ public class Character : Equipable
     {
         if (_charInitializer is not null)
         {
-            _source = _charInitializer.source;
+            _charAsset = _charInitializer.charAsset;
         }
 
-        if (_source is not null)
+        if (_charAsset is not null)
         {
-            _charMass = _source.characterMass;
+            _charMass = _charAsset.characterMass;
         }
     }
 
@@ -126,7 +126,7 @@ public class Character : Equipable
         _charMovement = _GetBehaviour<CharacterMovement>();
         _charObjectHandler = _GetBehaviour<CharacterObjectHandler>();
         _charView = _GetBehaviour<CharacterView>();
-        _charAnimation = _GetBehaviour<CharacterAnimation>();
+        _charPresentation = _GetBehaviour<CharacterPresentation>();
     }
 
     protected void _FetchInitializer()
@@ -231,14 +231,14 @@ public class Character : Equipable
     //// Properties and Fields
     //// -------------------------------------------------------------------------------------------
 
-    public CharacterAsset source => _source;
+    public CharacterAsset charAsset => _charAsset;
     public CharacterInitializer charInitializer => _charInitializer;
     public CharacterBody charBody => _charBody;
     public CharacterInventory charInventory => _charInventory;
     public CharacterMovement charMovement => _charMovement;
     public CharacterObjectHandler charObjectHandler => _charObjectHandler;
     public CharacterView charView => _charView;
-    public CharacterAnimation charAnimation => _charAnimation;
+    public CharacterPresentation charAnimation => _charPresentation;
     public Quaternion rotation => transform.rotation;
     public Vector3 forward => transform.forward;
     public Vector3 back => -transform.forward;
@@ -258,7 +258,7 @@ public class Character : Equipable
     protected CharacterMovement _charMovement;
     protected CharacterObjectHandler _charObjectHandler;
     protected CharacterView _charView;
-    protected CharacterAnimation _charAnimation;
+    protected CharacterPresentation _charPresentation;
     protected float _charMass;
-    private CharacterAsset _source;
+    private CharacterAsset _charAsset;
 }

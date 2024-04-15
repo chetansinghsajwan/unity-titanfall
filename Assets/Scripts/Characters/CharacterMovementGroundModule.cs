@@ -24,7 +24,7 @@ public class CharacterMovementGroundModule : CharacterMovementModule
 
         public bool isValid
         {
-            get => collider is not null;
+            get => collider != null;
         }
     }
 
@@ -44,58 +44,58 @@ public class CharacterMovementGroundModule : CharacterMovementModule
         Jumping
     }
 
-    public CharacterMovementGroundModule(CharacterMovementGroundModuleSource source)
+    public CharacterMovementGroundModule(CharacterAsset charAsset)
     {
-        Contract.Assume(source is not null);
+        Contract.Assume(charAsset is not null);
 
         _prevGroundResult = GroundResult.invalid;
         _groundResult = GroundResult.invalid;
 
-        _groundCheckDepth = source.checkDepth;
-        _groundLayer = source.groundLayer;
-        _minMoveDistance = source.minMoveDistance;
+        _groundCheckDepth = charAsset.groundCheckDepth;
+        _groundLayer = charAsset.groundLayer;
+        _minMoveDistance = charAsset.groundMinMoveDistance;
 
-        _standDeacceleration = source.standIdleAcceleration;
-        _standWalkSpeed = source.standWalkSpeed;
-        _standWalkAcceleration = source.standWalkAcceleration;
-        _standRunSpeed = source.standRunSpeed;
-        _standRunAcceleration = source.standRunAcceleration;
-        _standSprintSpeed = source.standSprintSpeed;
-        _standSprintAcceleration = source.standSprintAcceleration;
-        _standSprintLeftAngleMax = source.standSprintLeftAngleMax;
-        _standSprintRightAngleMax = source.standSprintRightAngleMax;
-        _standJumpForce = source.standJumpForce;
-        _standStepUpPercent = source.standStepUpPercent;
+        _standDeacceleration = charAsset.groundStandIdleAcceleration;
+        _standWalkSpeed = charAsset.groundStandWalkSpeed;
+        _standWalkAcceleration = charAsset.groundStandWalkAcceleration;
+        _standRunSpeed = charAsset.groundStandRunSpeed;
+        _standRunAcceleration = charAsset.groundStandRunAcceleration;
+        _standSprintSpeed = charAsset.groundStandSprintSpeed;
+        _standSprintAcceleration = charAsset.groundStandSprintAcceleration;
+        _standSprintLeftAngleMax = charAsset.groundStandSprintLeftAngleMax;
+        _standSprintRightAngleMax = charAsset.groundStandSprintRightAngleMax;
+        _standJumpForce = charAsset.groundStandJumpForce;
+        _standStepUpPercent = charAsset.groundStandStepUpPercent;
         _standStepUpHeight = _capsule.height * _standStepUpPercent / 100f;
-        _standStepDownPercent = source.standStepDownPercent;
+        _standStepDownPercent = charAsset.groundStandStepDownPercent;
         _standStepDownHeight = _capsule.height * _standStepDownPercent / 100f;
-        _standSlopeUpAngle = source.standSlopeUpAngle;
-        _standSlopeDownAngle = source.standSlopeDownAngle;
-        _standMaintainVelocityOnSurface = source.standMaintainVelocityOnSurface;
-        _standMaintainVelocityAlongSurface = source.standMaintainVelocityAlongSurface;
-        _standCapsuleCenter = source.standCapsuleCenter;
-        _standCapsuleHeight = source.standCapsuleHeight;
-        _standCapsuleRadius = source.standCapsuleRadius;
-        _standToCrouchTransitionSpeed = source.standToCrouchTransitionSpeed;
+        _standSlopeUpAngle = charAsset.groundStandSlopeUpAngle;
+        _standSlopeDownAngle = charAsset.groundStandSlopeDownAngle;
+        _standMaintainVelocityOnSurface = charAsset.groundStandMaintainVelocityOnSurface;
+        _standMaintainVelocityAlongSurface = charAsset.groundStandMaintainVelocityAlongSurface;
+        _standCapsuleCenter = charAsset.groundStandCapsuleCenter;
+        _standCapsuleHeight = charAsset.groundStandCapsuleHeight;
+        _standCapsuleRadius = charAsset.groundStandCapsuleRadius;
+        _standToCrouchTransitionSpeed = charAsset.groundStandToCrouchTransitionSpeed;
 
-        _crouchDeacceleration = source.crouchIdleAcceleration;
-        _crouchWalkSpeed = source.crouchWalkSpeed;
-        _crouchWalkAcceleration = source.crouchWalkAcceleration;
-        _crouchRunSpeed = source.crouchRunSpeed;
-        _crouchRunAcceleration = source.crouchRunAcceleration;
-        _crouchJumpForce = source.crouchJumpForce;
-        _crouchStepUpPercent = source.crouchStepUpPercent;
+        _crouchDeacceleration = charAsset.groundCrouchIdleAcceleration;
+        _crouchWalkSpeed = charAsset.groundCrouchWalkSpeed;
+        _crouchWalkAcceleration = charAsset.groundCrouchWalkAcceleration;
+        _crouchRunSpeed = charAsset.groundCrouchRunSpeed;
+        _crouchRunAcceleration = charAsset.groundCrouchRunAcceleration;
+        _crouchJumpForce = charAsset.groundCrouchJumpForce;
+        _crouchStepUpPercent = charAsset.groundCrouchStepUpPercent;
         _crouchStepUpHeight = _capsule.height * _crouchStepUpPercent / 100f;
-        _crouchStepDownPercent = source.crouchStepDownPercent;
+        _crouchStepDownPercent = charAsset.groundCrouchStepDownPercent;
         _crouchStepUpHeight = _capsule.height * _crouchStepUpPercent / 100f;
-        _crouchSlopeUpAngle = source.crouchSlopeUpAngle;
-        _crouchSlopeDownAngle = source.crouchSlopeDownAngle;
-        _crouchMaintainVelocityOnSurface = source.crouchMaintainVelocityOnSurface;
-        _crouchMaintainVelocityAlongSurface = source.crouchMaintainVelocityAlongSurface;
-        _crouchCapsuleCenter = source.crouchCapsuleCenter;
-        _crouchCapsuleHeight = source.crouchCapsuleHeight;
-        _crouchCapsuleRadius = source.crouchCapsuleRadius;
-        _crouchToStandTransitionSpeed = source.crouchToStandTransitionSpeed;
+        _crouchSlopeUpAngle = charAsset.groundCrouchSlopeUpAngle;
+        _crouchSlopeDownAngle = charAsset.groundCrouchSlopeDownAngle;
+        _crouchMaintainVelocityOnSurface = charAsset.groundCrouchMaintainVelocityOnSurface;
+        _crouchMaintainVelocityAlongSurface = charAsset.groundCrouchMaintainVelocityAlongSurface;
+        _crouchCapsuleCenter = charAsset.groundCrouchCapsuleCenter;
+        _crouchCapsuleHeight = charAsset.groundCrouchCapsuleHeight;
+        _crouchCapsuleRadius = charAsset.groundCrouchCapsuleRadius;
+        _crouchToStandTransitionSpeed = charAsset.groundCrouchToStandTransitionSpeed;
     }
 
     //// -------------------------------------------------------------------------------------------
@@ -599,166 +599,6 @@ public class CharacterMovementGroundModule : CharacterMovementModule
     }
 
     //// -------------------------------------------------------------------------------------------
-    //// Animations
-    //// -------------------------------------------------------------------------------------------
-
-    protected void _CreateAnimGraph()
-    {
-        if (_animGraph.IsValid())
-        {
-            throw new NullReferenceException($"PlayableGraph for character {_character.name} is invalid");
-        }
-
-        if (_source is null)
-        {
-            throw new NullReferenceException(@$"{nameof(CharacterMovementGroundModuleSource)} 
-                for {nameof(CharacterMovementGroundModule)} of character {_character.name} is null");
-        }
-
-        _animBaseTree = new AnimationBlendTree1D(_animGraph);
-        _animStandTree = new AnimationBlendTree1D(_animGraph);
-        _animStandWalkTree = new AnimationBlendTree2DSimpleDirectional(_animGraph);
-        _animStandRunTree = new AnimationBlendTree2DSimpleDirectional(_animGraph);
-        _animCrouchTree = new AnimationBlendTree1D(_animGraph);
-        _animCrouchWalkTree = new AnimationBlendTree2DSimpleDirectional(_animGraph);
-        _animCrouchRunTree = new AnimationBlendTree2DSimpleDirectional(_animGraph);
-
-        Vector2 center = new Vector2(0.00f, 0.00f);
-        Vector2 front = new Vector2(0.00f, 1.00f);
-        Vector2 frontLeft = new Vector2(-0.70f, 0.70f);
-        Vector2 frontRight = new Vector2(-0.70f, 0.70f);
-        Vector2 left = new Vector2(-0.10f, 0.00f);
-        Vector2 right = new Vector2(0.10f, 0.00f);
-        Vector2 back = new Vector2(0.00f, -1.00f);
-        Vector2 backLeft = new Vector2(-0.70f, -0.70f);
-        Vector2 backRight = new Vector2(0.70f, -0.70f);
-
-        // Stand Tree
-        // -----------------------------------------------------------------------------------------
-
-        _animStandWalkTree.Reserve(9);
-        _animStandWalkTree.AddElement(_source.animStandIdle, center);
-        _animStandWalkTree.AddElement(_source.animStandWalkForward, front);
-        _animStandWalkTree.AddElement(_source.animStandWalkForwardLeft, frontLeft);
-        _animStandWalkTree.AddElement(_source.animStandWalkForwardRight, frontRight);
-        _animStandWalkTree.AddElement(_source.animStandWalkLeft, left);
-        _animStandWalkTree.AddElement(_source.animStandWalkRight, right);
-        _animStandWalkTree.AddElement(_source.animStandWalkBackward, back);
-        _animStandWalkTree.AddElement(_source.animStandWalkBackwardLeft, backLeft);
-        _animStandWalkTree.AddElement(_source.animStandWalkBackwardRight, backRight);
-        _animStandWalkTree.EnableFootIk();
-        _animStandWalkTree.BuildGraph(true);
-        _animStandWalkTree.UpdateGraph(true);
-
-        _animStandRunTree.Reserve(9);
-        _animStandRunTree.AddElement(_source.animStandIdle, center * 2f);
-        _animStandRunTree.AddElement(_source.animStandRunForward, front * 2f);
-        _animStandRunTree.AddElement(_source.animStandRunForwardLeft, frontLeft * 2f);
-        _animStandRunTree.AddElement(_source.animStandRunForwardRight, frontRight * 2f);
-        _animStandRunTree.AddElement(_source.animStandRunLeft, left * 2f);
-        _animStandRunTree.AddElement(_source.animStandRunRight, right * 2f);
-        _animStandRunTree.AddElement(_source.animStandRunBackward, back * 2f);
-        _animStandRunTree.AddElement(_source.animStandRunBackwardLeft, backLeft * 2f);
-        _animStandRunTree.AddElement(_source.animStandRunBackwardRight, backRight * 2f);
-        _animStandRunTree.EnableFootIk();
-        _animStandRunTree.BuildGraph(true);
-        _animStandRunTree.UpdateGraph(true);
-
-        _animStandTree.Reserve(4);
-        _animStandTree.AddElement(_source.animStandIdle, 0f);
-        _animStandTree.AddElement(_animStandWalkTree, 1f);
-        _animStandTree.AddElement(_animStandRunTree, 2f);
-        _animStandTree.AddElement(_source.animStandSprintForward, 3f);
-        _animStandTree.EnableFootIk();
-        _animStandTree.BuildGraph(true);
-        _animStandTree.UpdateGraph(true);
-
-        // Crouch Tree
-        // -----------------------------------------------------------------------------------------
-
-        _animCrouchWalkTree.Reserve(9);
-        _animCrouchWalkTree.AddElement(_source.animCrouchIdle, center);
-        _animCrouchWalkTree.AddElement(_source.animCrouchWalkForward, front);
-        _animCrouchWalkTree.AddElement(_source.animCrouchWalkForwardLeft, frontLeft);
-        _animCrouchWalkTree.AddElement(_source.animCrouchWalkForwardRight, frontRight);
-        _animCrouchWalkTree.AddElement(_source.animCrouchWalkLeft, left);
-        _animCrouchWalkTree.AddElement(_source.animCrouchWalkRight, right);
-        _animCrouchWalkTree.AddElement(_source.animCrouchWalkBackward, back);
-        _animCrouchWalkTree.AddElement(_source.animCrouchWalkBackwardLeft, backLeft);
-        _animCrouchWalkTree.AddElement(_source.animCrouchWalkBackwardRight, backRight);
-        _animCrouchWalkTree.EnableFootIk();
-        _animCrouchWalkTree.BuildGraph(true);
-        _animCrouchWalkTree.UpdateGraph(true);
-
-        _animCrouchRunTree.Reserve(9);
-        _animCrouchRunTree.AddElement(_source.animCrouchIdle, center * 2f);
-        _animCrouchRunTree.AddElement(_source.animCrouchRunForward, front * 2f);
-        _animCrouchRunTree.AddElement(_source.animCrouchRunForwardLeft, frontLeft * 2f);
-        _animCrouchRunTree.AddElement(_source.animCrouchRunForwardRight, frontRight * 2f);
-        _animCrouchRunTree.AddElement(_source.animCrouchRunLeft, left * 2f);
-        _animCrouchRunTree.AddElement(_source.animCrouchRunRight, right * 2f);
-        _animCrouchRunTree.AddElement(_source.animCrouchRunBackward, back * 2f);
-        _animCrouchRunTree.AddElement(_source.animCrouchRunBackwardLeft, backLeft * 2f);
-        _animCrouchRunTree.AddElement(_source.animCrouchRunBackwardRight, backRight * 2f);
-        _animCrouchRunTree.EnableFootIk();
-        _animCrouchRunTree.BuildGraph(true);
-        _animCrouchRunTree.UpdateGraph(true);
-
-        _animCrouchTree.Reserve(3);
-        _animCrouchTree.AddElement(_source.animCrouchIdle, 0f);
-        _animCrouchTree.AddElement(_animCrouchWalkTree, 1f);
-        _animCrouchTree.AddElement(_animCrouchRunTree, 2f);
-        _animCrouchTree.EnableFootIk();
-        _animCrouchTree.BuildGraph(true);
-        _animCrouchTree.UpdateGraph(true);
-
-        // Base Tree
-        // -----------------------------------------------------------------------------------------
-
-        _animBaseTree.Reserve(2);
-        _animBaseTree.AddElement(_animStandTree, 0f);
-        _animBaseTree.AddElement(_animCrouchTree, 1f);
-        _animBaseTree.EnableFootIk();
-        _animBaseTree.BuildGraph(true);
-        _animBaseTree.UpdateGraph(true);
-    }
-
-    protected void _UpdateAnimGraph()
-    {
-        float walkSpeed = _standWalkSpeed;
-        float runSpeed = _standRunSpeed;
-        float sprintSpeed = _standSprintSpeed;
-
-        Vector2 velocity = new Vector2(_velocity.x, _velocity.z);
-        float speed = velocity.magnitude;
-        speed = MathF.Round(speed, 2);
-
-        if (speed <= walkSpeed)
-        {
-            speed = speed / walkSpeed;
-        }
-        else if (speed <= runSpeed)
-        {
-            speed = 1f + (speed - walkSpeed) / (runSpeed - walkSpeed);
-        }
-        else
-        {
-            speed = 2f + (speed - runSpeed) / (sprintSpeed - runSpeed);
-        }
-
-        velocity = velocity.normalized * Mathf.Clamp(speed, 0f, 2f);
-
-        _animStandWalkTree.SetBlendPosition(velocity);
-        _animStandRunTree.SetBlendPosition(velocity);
-        _animCrouchWalkTree.SetBlendPosition(velocity);
-        _animCrouchRunTree.SetBlendPosition(velocity);
-
-        _animStandTree.SetBlendPosition(speed);
-        _animCrouchTree.SetBlendPosition(speed);
-        _animBaseTree.SetBlendPosition(0f);
-    }
-
-    //// -------------------------------------------------------------------------------------------
     //// Properties and Fields
     //// -------------------------------------------------------------------------------------------
 
@@ -782,15 +622,6 @@ public class CharacterMovementGroundModule : CharacterMovementModule
     protected LocomotionState _prevLocomotionState;     // previous state, different from current state
     protected MovementState _prevMovementState;         // previous state, different from current state
 
-    protected PlayableGraph _animGraph;
-    protected AnimationBlendTree1D _animBaseTree;
-    protected AnimationBlendTree1D _animStandTree;
-    protected AnimationBlendTree2D _animStandWalkTree;
-    protected AnimationBlendTree2D _animStandRunTree;
-    protected AnimationBlendTree1D _animCrouchTree;
-    protected AnimationBlendTree2D _animCrouchWalkTree;
-    protected AnimationBlendTree2D _animCrouchRunTree;
-
     protected float _moveSpeed = 0;
     protected float _moveAccel = 0;
     protected float _jumpPower = 0;
@@ -802,7 +633,7 @@ public class CharacterMovementGroundModule : CharacterMovementModule
     protected bool _maintainVelocityAlongSurface = true;
 
     //// -------------------------------------------------------------------------------------------
-    //// Cached values from source asset
+    //// Cached values from charAsset asset
     //// -------------------------------------------------------------------------------------------
 
     protected readonly LayerMask _groundLayer;

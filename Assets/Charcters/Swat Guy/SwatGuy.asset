@@ -18,8 +18,92 @@ MonoBehaviour:
   tppPrefab: {fileID: 6526974782931169490, guid: 79e02451be545264ba8f6991f17f127d, type: 3}
   fppPrefab: {fileID: 0}
   characterMass: 80
-  groundModuleSource: {fileID: 11400000, guid: 6da330a94796bcdbe86b456d35de8fa0, type: 2}
-  airModuleSource: {fileID: 11400000, guid: a0a6f765d1995540d9503c779e03d5d6, type: 2}
+  groundCheckDepth: 1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  groundMinMoveDistance: 0
+  groundStandIdleSpeed: 0
+  groundStandIdleAcceleration: 0.4
+  groundStandWalkSpeed: 2
+  groundStandWalkAcceleration: 0.3
+  groundStandRunSpeed: 4
+  groundStandRunAcceleration: 0.4
+  groundStandSprintSpeed: 6
+  groundStandSprintAcceleration: 0.3
+  groundStandSprintLeftAngleMax: -46
+  groundStandSprintRightAngleMax: 46
+  groundStandJumpForce: 10
+  groundStandStepUpPercent: 40
+  groundStandStepDownPercent: 40
+  groundStandSlopeUpAngle: 45
+  groundStandSlopeDownAngle: -45
+  groundStandCapsuleCenter: {x: 0, y: 1, z: 0}
+  groundStandCapsuleHeight: 2
+  groundStandCapsuleRadius: 0.5
+  groundStandToCrouchTransitionSpeed: 5
+  groundStandMaintainVelocityOnSurface: 0
+  groundStandMaintainVelocityAlongSurface: 0
+  groundCrouchIdleSpeed: 0
+  groundCrouchIdleAcceleration: 0.3
+  groundCrouchWalkSpeed: 1
+  groundCrouchWalkAcceleration: 0.3
+  groundCrouchRunSpeed: 3
+  groundCrouchRunAcceleration: 0.3
+  groundCrouchAutoRiseToStandSprint: 1
+  groundCrouchJumpForce: 15
+  groundCrouchStepUpPercent: 55
+  groundCrouchStepDownPercent: 55
+  groundCrouchSlopeUpAngle: 60
+  groundCrouchSlopeDownAngle: -60
+  groundCrouchCapsuleCenter: {x: 0, y: 1, z: 0}
+  groundCrouchCapsuleHeight: 1
+  groundCrouchCapsuleRadius: 0.5
+  groundCrouchToStandTransitionSpeed: 8
+  groundCrouchMaintainVelocityOnSurface: 0
+  groundCrouchMaintainVelocityAlongSurface: 0
+  airGravityAcceleration: 9.8
+  airGravityMaxSpeed: Infinity
+  airMinMoveDistance: 0
+  airMoveSpeed: 0
+  airMoveAcceleration: 0
+  airJumpPower: 0
+  airMaxJumpCount: 0
   avatar: {fileID: 9000000, guid: 15003a1bcee5a8a4fb2e8e608f16f035, type: 3}
-  AvatarMaskUpperBody: {fileID: 0}
-  AvatarMaskLowerBody: {fileID: 0}
+  avatarMaskUpperBody: {fileID: 0}
+  avatarMaskLowerBody: {fileID: 0}
+  animGroundStandIdle: {fileID: -203655887218126122, guid: 6673384fb3a4c174e87672042730066c, type: 3}
+  animGroundStandWalkForward: {fileID: -203655887218126122, guid: 8339ed85d11079444b13b2b41e3d0529, type: 3}
+  animGroundStandWalkForwardLeft: {fileID: -203655887218126122, guid: db8c0c268cf97b44aa71e8bf4281d25a, type: 3}
+  animGroundStandWalkForwardRight: {fileID: -203655887218126122, guid: 43951f9a9d5f6cf42931dea4a38aa27e, type: 3}
+  animGroundStandWalkLeft: {fileID: -203655887218126122, guid: 63016cfc9d6a63d42ad9c4eb5cd511e5, type: 3}
+  animGroundStandWalkRight: {fileID: -203655887218126122, guid: 2d5daca91b4cab74cbfb3529a7f088d3, type: 3}
+  animGroundStandWalkBackward: {fileID: -203655887218126122, guid: 54af15268ab8a254c9bdd5b5149214f2, type: 3}
+  animGroundStandWalkBackwardLeft: {fileID: -203655887218126122, guid: f98cfccc37670bb4386a51dafe9cd262, type: 3}
+  animGroundStandWalkBackwardRight: {fileID: -203655887218126122, guid: 314e06126b7ac2b479e0828b7b9ba833, type: 3}
+  animGroundStandRunForward: {fileID: -203655887218126122, guid: b6d68828d096d304d983789311e182c7, type: 3}
+  animGroundStandRunForwardLeft: {fileID: -203655887218126122, guid: d99af7af6efe26e44aa312bf8f2c128d, type: 3}
+  animGroundStandRunForwardRight: {fileID: -203655887218126122, guid: 2ad87dbb6bcc58640af04c51a55e697f, type: 3}
+  animGroundStandRunLeft: {fileID: -203655887218126122, guid: b859f86574c0b3d4999521abfd47c04a, type: 3}
+  animGroundStandRunRight: {fileID: -203655887218126122, guid: 255f692bcc24c5942826fcdd03889455, type: 3}
+  animGroundStandRunBackward: {fileID: -203655887218126122, guid: 8d9080b1294a8d841be5a28db7b374b7, type: 3}
+  animGroundStandRunBackwardLeft: {fileID: -203655887218126122, guid: 5c5852f8d76d80f4f914c161c64d54dd, type: 3}
+  animGroundStandRunBackwardRight: {fileID: -203655887218126122, guid: e13b04d93ff2c094bb7778b5503c5ea6, type: 3}
+  animGroundStandSprintForward: {fileID: -203655887218126122, guid: adc4f10bc0105434fbbce00e9528041c, type: 3}
+  animGroundCrouchIdle: {fileID: -203655887218126122, guid: be7f3672163773440896e5b5220eac7e, type: 3}
+  animGroundCrouchWalkForward: {fileID: -203655887218126122, guid: ac4cccb20447452458bf556b9df57efb, type: 3}
+  animGroundCrouchWalkForwardLeft: {fileID: -203655887218126122, guid: ece15fd37104f0e45ab0573d2eb0c49a, type: 3}
+  animGroundCrouchWalkForwardRight: {fileID: -203655887218126122, guid: e24e4a991a05eaa4bb774df3c67b245d, type: 3}
+  animGroundCrouchWalkLeft: {fileID: -203655887218126122, guid: 0e6e9a6e5dc713644b8ac0530afa7a1d, type: 3}
+  animGroundCrouchWalkRight: {fileID: -203655887218126122, guid: 32f464767a98efb4fb4ac554177ca96d, type: 3}
+  animGroundCrouchWalkBackward: {fileID: -203655887218126122, guid: 6b4f4951567003d4ca42635f53ecc36f, type: 3}
+  animGroundCrouchWalkBackwardLeft: {fileID: -203655887218126122, guid: 37df01f5ce7f1d24ab7b4aaa9223e56b, type: 3}
+  animGroundCrouchWalkBackwardRight: {fileID: -203655887218126122, guid: 29fa25bc5e4b4a94db057339370527e0, type: 3}
+  animGroundCrouchRunForward: {fileID: 0}
+  animGroundCrouchRunForwardLeft: {fileID: 0}
+  animGroundCrouchRunForwardRight: {fileID: 0}
+  animGroundCrouchRunLeft: {fileID: -203655887218126122, guid: 5f0f13d9b9990b84ba8d7cdb8ec4592f, type: 3}
+  animGroundCrouchRunRight: {fileID: -203655887218126122, guid: 4ffcb8d358da926418de10c0e2b64643, type: 3}
+  animGroundCrouchRunBackward: {fileID: -203655887218126122, guid: 7115c819fa2a0a84683d20ed604f29f7, type: 3}
+  animGroundCrouchRunBackwardLeft: {fileID: 0}
+  animGroundCrouchRunBackwardRight: {fileID: 0}
