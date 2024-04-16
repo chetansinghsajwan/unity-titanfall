@@ -32,8 +32,16 @@ class CharacterMovementAirModule : CharacterMovementModule
         return true;
     }
 
-    public override void Update()
+    public override void RunPhysics(out VirtualCapsule result)
     {
+        _charUp = _character.up;
+        _charRight = _character.right;
+        _charForward = _character.forward;
+        _velocity = _charMovement.velocity;
+        _capsule = _charMovement.capsule;
+        _skinWidth = _charMovement.skinWidth;
+        _deltaTime = Time.deltaTime;
+
         UpdateValues();
 
         Vector3 charUp = _charUp;
@@ -110,6 +118,7 @@ class CharacterMovementAirModule : CharacterMovementModule
         Vector3 move = moveH + moveV;
 
         PerformMove(move);
+        result = _capsule;
     }
 
     protected virtual void UpdateGroundModule()
@@ -193,8 +202,12 @@ class CharacterMovementAirModule : CharacterMovementModule
     protected float _moveSpeed;
     protected float _moveAcceleration;
     protected float _jumpPower;
-
     protected uint _maxJumpCount;
+    protected Vector3 _charUp;
+    protected Vector3 _charRight;
+    protected Vector3 _charForward;
+    protected Vector3 _velocity;
+    protected float _deltaTime;
 
     protected bool _inputJump;
 

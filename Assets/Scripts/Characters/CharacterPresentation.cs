@@ -116,14 +116,14 @@ class CharacterPresentation : CharacterBehaviour
 
         _animGroundCrouchRunTree.Reserve(9);
         _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchIdle, center * 2f);
-        _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchRunForward, front * 2f);
-        _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchRunForwardLeft, frontLeft * 2f);
-        _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchRunForwardRight, frontRight * 2f);
+        // _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchRunForward, front * 2f);
+        // _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchRunForwardLeft, frontLeft * 2f);
+        // _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchRunForwardRight, frontRight * 2f);
         _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchRunLeft, left * 2f);
         _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchRunRight, right * 2f);
         _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchRunBackward, back * 2f);
-        _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchRunBackwardLeft, backLeft * 2f);
-        _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchRunBackwardRight, backRight * 2f);
+        // _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchRunBackwardLeft, backLeft * 2f);
+        // _animGroundCrouchRunTree.AddElement(_charAsset.animGroundCrouchRunBackwardRight, backRight * 2f);
         _animGroundCrouchRunTree.EnableFootIk();
         _animGroundCrouchRunTree.BuildGraph(true);
         _animGroundCrouchRunTree.UpdateGraph(true);

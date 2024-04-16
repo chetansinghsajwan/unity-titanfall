@@ -1643,9 +1643,9 @@ GameObject:
   - component: {fileID: 6770542791026616596}
   - component: {fileID: 3178208661893971848}
   - component: {fileID: 3335872080112416175}
-  - component: {fileID: 3321810697891624182}
   - component: {fileID: 5399984233667666123}
-  - component: {fileID: 115547698234889312}
+  - component: {fileID: 4264609319418783719}
+  - component: {fileID: 1280378181806608899}
   - component: {fileID: 2017536350101832689}
   - component: {fileID: 6443474156247494111}
   m_Layer: 0
@@ -1735,48 +1735,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7262304a2f5a754bb05b7e89d850f58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3321810697891624182
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6526974782931169490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49c771ea35f12ba45b44f5e86931fc1a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _leftCurrent:
-    equipable: {fileID: 0}
-    equip_speed: 0
-    unequip_speed: 0
-    slot: 0
-  _leftNext:
-    equipable: {fileID: 0}
-    equip_speed: 0
-    unequip_speed: 0
-    slot: 0
-  _leftStatus: 0
-  _leftWeight: 0
-  _leftLocked: 0
-  _leftSupporting: 0
-  _rightCurrent:
-    equipable: {fileID: 0}
-    equip_speed: 0
-    unequip_speed: 0
-    slot: 0
-  _rightNext:
-    equipable: {fileID: 0}
-    equip_speed: 0
-    unequip_speed: 0
-    slot: 0
-  _rightStatus: 0
-  _rightWeight: 0
-  _rightLocked: 0
-  _rightSupporting: 0
-  _rightWeaponReloading: 0
-  _rightCanStopWeaponReloading: 0
 --- !u!114 &5399984233667666123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1809,7 +1767,7 @@ MonoBehaviour:
     maxRotation: {x: 0, y: 0, z: 0}
     minDistanceFromLookSource: 0
     maxDistanceFromLookSource: 0
---- !u!114 &115547698234889312
+--- !u!114 &4264609319418783719
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1818,7 +1776,49 @@ MonoBehaviour:
   m_GameObject: {fileID: 6526974782931169490}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 463932af96b40e449b7015fd958be4e5, type: 3}
+  m_Script: {fileID: 11500000, guid: 14cdc22ac6f2181168d720baa97e7ad9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _leftCurrent:
+    equipable: {fileID: 0}
+    equip_speed: 0
+    unequip_speed: 0
+    slot: 0
+  _leftNext:
+    equipable: {fileID: 0}
+    equip_speed: 0
+    unequip_speed: 0
+    slot: 0
+  _leftStatus: 0
+  _leftWeight: 0
+  _leftLocked: 0
+  _leftSupporting: 0
+  _rightCurrent:
+    equipable: {fileID: 0}
+    equip_speed: 0
+    unequip_speed: 0
+    slot: 0
+  _rightNext:
+    equipable: {fileID: 0}
+    equip_speed: 0
+    unequip_speed: 0
+    slot: 0
+  _rightStatus: 0
+  _rightWeight: 0
+  _rightLocked: 0
+  _rightSupporting: 0
+  _rightWeaponReloading: 0
+  _rightCanStopWeaponReloading: 0
+--- !u!114 &1280378181806608899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6526974782931169490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a09980a602a26d6186341fd33b64142, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!95 &2017536350101832689
