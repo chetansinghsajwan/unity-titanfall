@@ -8,7 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerInteraction))]
 [RequireComponent(typeof(PlayerInteraction))]
 [RequireComponent(typeof(PlayerHUD))]
-public class Player : Controller
+class Player : Controller
 {
     protected override void Awake()
     {

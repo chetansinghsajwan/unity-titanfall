@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerInputs : PlayerBehaviour
+class PlayerInputs : PlayerBehaviour
 {
     protected Character _character = null;
     protected CharacterMovement _characterMovement = null;

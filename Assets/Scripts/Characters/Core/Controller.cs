@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Controller : MonoBehaviour
+class Controller : MonoBehaviour
 {
     protected Character _character;
     public Character character => _character;

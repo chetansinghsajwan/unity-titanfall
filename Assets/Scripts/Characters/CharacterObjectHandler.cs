@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class CharacterObjectHandler : CharacterBehaviour
+class CharacterObjectHandler : CharacterBehaviour
 {
     [Serializable]
     protected struct EquipData

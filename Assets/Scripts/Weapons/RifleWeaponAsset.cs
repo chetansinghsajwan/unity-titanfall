@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = MENU_PATH + MENU_NAME, fileName = FILE_NAME)]
-public class RifleWeaponAsset : WeaponAsset
+class RifleWeaponAsset : WeaponAsset
 {
     public const string MENU_NAME = "Rifle Weapon Source";
     public const string FILE_NAME = "Rifle Weapon Source";

@@ -2,7 +2,7 @@ using UnityEditor;
 
 namespace UnityEngine
 {
-    public static class GizmosExtensions
+    static class GizmosExtensions
     {
         public static void DrawWireCapsule(Vector3 pos, Quaternion rot, float height, float radius, Color color = default(Color))
         {

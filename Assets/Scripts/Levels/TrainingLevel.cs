@@ -6,7 +6,7 @@ using GameFramework.LevelManagement;
 using GameFramework;
 
 [CreateAssetMenu(menuName = MENU_PATH + "TrainingLevel", fileName = "TrainingLevel")]
-public class TrainingLevel : BasicLevelAsset
+class TrainingLevel : BasicLevelAsset
 {
     public override LevelAsyncOperation PerformLoad()
     {

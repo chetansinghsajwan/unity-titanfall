@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class StateMachine<T>
+class StateMachine<T>
 {
     public delegate void StateFunc();
 

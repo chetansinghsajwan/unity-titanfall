@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class CharacterMovementAirModule : CharacterMovementModule
+class CharacterMovementAirModule : CharacterMovementModule
 {
     protected const uint AIR_MAX_MOVE_ITERATIONS = 10;
     protected const float GRAVITY_MULTIPLIER = .05f;

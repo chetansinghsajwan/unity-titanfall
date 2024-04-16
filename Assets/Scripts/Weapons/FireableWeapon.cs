@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public abstract class FireableWeapon : Weapon
+abstract class FireableWeapon : Weapon
 {
     protected WeaponBulletAsset _bulletSource;
 

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public abstract class ReloadableWeapon : FireableWeapon
+abstract class ReloadableWeapon : FireableWeapon
 {
     public ReloadableWeapon()
     {

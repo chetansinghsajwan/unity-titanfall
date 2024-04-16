@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Player))]
-public abstract class PlayerBehaviour : MonoBehaviour
+abstract class PlayerBehaviour : MonoBehaviour
 {
     public virtual void OnPlayerCreate(Player player)
     {

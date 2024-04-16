@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class DataAsset : ScriptableObject
+abstract class DataAsset : ScriptableObject
 {
     public virtual void OnLoad()
     {

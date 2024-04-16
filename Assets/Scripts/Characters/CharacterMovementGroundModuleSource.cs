@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [CreateAssetMenu(menuName = MENU_PATH + "Ground Module")]
-public class CharacterMovementGroundModuleSource : CharacterMovementModuleSource
+class CharacterMovementGroundModuleSource : CharacterMovementModuleSource
 {
     [SerializeField] public float checkDepth;
     [SerializeField] public LayerMask groundLayer;

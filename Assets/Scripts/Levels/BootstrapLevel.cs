@@ -1,3 +1,3 @@
 ﻿using GameFramework.LevelManagement;
 
-public class BootstrapLevel : BasicLevelAsset { }
+class BootstrapLevel : BasicLevelAsset { }

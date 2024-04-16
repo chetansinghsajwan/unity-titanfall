@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class RigidbodyProjectile : Projectile
+class RigidbodyProjectile : Projectile
 {
     private void Awake()
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class WeaponAsset : DataAsset
+abstract class WeaponAsset : DataAsset
 {
     public const string MENU_PATH = "Weapon/";
 

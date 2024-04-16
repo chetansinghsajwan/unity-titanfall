@@ -1,6 +1,6 @@
 namespace UnityEngine.Playables
 {
-    public class AnimationBlendTree1D : AnimationBlendTree<float>
+    class AnimationBlendTree1D : AnimationBlendTree<float>
     {
         public AnimationBlendTree1D(PlayableGraph graph)
             : base(graph) { }

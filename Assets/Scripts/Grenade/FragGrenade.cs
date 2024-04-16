@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class FragGrenade : Grenade
+class FragGrenade : Grenade
 {
     protected sealed override void _OnTriggerFinish()
     {

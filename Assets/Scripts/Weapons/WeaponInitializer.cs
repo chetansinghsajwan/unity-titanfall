@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class WeaponInitializer : MonoBehaviour
+class WeaponInitializer : MonoBehaviour
 {
     public bool destroyAfterUse;
     public WeaponAsset source;

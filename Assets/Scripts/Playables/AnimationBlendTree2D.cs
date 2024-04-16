@@ -1,6 +1,6 @@
 namespace UnityEngine.Playables
 {
-    public abstract class AnimationBlendTree2D : AnimationBlendTree<Vector2>
+    abstract class AnimationBlendTree2D : AnimationBlendTree<Vector2>
     {
         public AnimationBlendTree2D(PlayableGraph graph)
             : base(graph) { }

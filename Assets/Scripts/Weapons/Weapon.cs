@@ -15,7 +15,7 @@ public enum WeaponCategory
 }
 
 [DisallowMultipleComponent]
-public abstract class Weapon : Equipable
+abstract class Weapon : Equipable
 {
     protected virtual void Awake()
     {

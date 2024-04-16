@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = MENU_PATH + MENU_NAME, fileName = FILE_NAME)]
-public class WeaponBulletAsset : DataAsset
+class WeaponBulletAsset : DataAsset
 {
     public const string MENU_PATH = "Weapon Bullet/";
     public const string MENU_NAME = "Bullet Asset";

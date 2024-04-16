@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = MENU_PATH + MENU_NAME, fileName = FILE_NAME)]
-public partial class CharacterAsset : DataAsset
+partial class CharacterAsset : DataAsset
 {
     public const string MENU_PATH = "Character/";
     public const string MENU_NAME = "Character Asset";

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public static class Vector3Extensions
+static class Vector3Extensions
 {
     /// <summary>
     /// Gets the magnitude on an axis given a <see cref="Vector3"/>.

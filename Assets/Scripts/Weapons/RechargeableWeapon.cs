@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
 
-public abstract class RechargeableWeapon : FireableWeapon
+abstract class RechargeableWeapon : FireableWeapon
 {
 }

@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
 
-public class PlayerState : PlayerBehaviour
+class PlayerState : PlayerBehaviour
 {
 }
