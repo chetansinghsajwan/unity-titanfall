@@ -42,7 +42,7 @@ partial class CharacterAsset : DataAsset
     /// Movement
     /// --------------------------------------------------------------------------------------------
 
-    [Space, Header("Movement")]
+    [Header("Movement")]
 
     public float groundCheckDepth;
     public LayerMask groundLayer;
@@ -101,7 +101,7 @@ partial class CharacterAsset : DataAsset
     /// Animations
     /// --------------------------------------------------------------------------------------------
 
-    [Space, Header("Animation")]
+    [Header("Animation")]
 
     public Avatar avatar;
     public Avatar avatarMaskUpperBody;
@@ -143,4 +143,12 @@ partial class CharacterAsset : DataAsset
     public AnimationClip animGroundCrouchRunBackward;
     public AnimationClip animGroundCrouchRunBackwardLeft;
     public AnimationClip animGroundCrouchRunBackwardRight;
+
+    /// --------------------------------------------------------------------------------------------
+    /// Interaction
+    /// --------------------------------------------------------------------------------------------
+
+    [Header("Interaction")]
+
+    public CharacterInteractionModuleAsset[] interationModules;
 }

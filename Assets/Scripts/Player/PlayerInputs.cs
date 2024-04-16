@@ -3,8 +3,9 @@ using UnityEngine;
 class PlayerInputs : PlayerBehaviour
 {
     protected Character _character = null;
-    protected CharacterMovement _characterMovement = null;
-    protected CharacterMovementGroundModule _characterMovementGroundModule = null;
+    protected CharacterMovement _charMovement = null;
+    protected CharacterMovementGroundModule _charMovementGroundModule = null;
+    protected CharacterInteraction _charInteration = null;
     protected PlayerInteraction _playerInteraction;
 
     protected Vector2 _move = Vector2.zero;
@@ -30,19 +31,20 @@ class PlayerInputs : PlayerBehaviour
         if (character is null)
         {
             _character = null;
-            _characterMovement = null;
-            _characterMovementGroundModule = null;
+            _charMovement = null;
+            _charMovementGroundModule = null;
             return;
         }
         
         _character = character;
-        _characterMovement = _character.charMovement;
+        _charMovement = _character.charMovement;
+        _charInteration = _character.charInteraction;
 
-        foreach (var module in _characterMovement.modules)
+        foreach (var module in _charMovement.modules)
         {
             if (module is CharacterMovementGroundModule)
             {
-                _characterMovementGroundModule = module as CharacterMovementGroundModule;
+                _charMovementGroundModule = module as CharacterMovementGroundModule;
                 break;
             }
         }
@@ -54,15 +56,15 @@ class PlayerInputs : PlayerBehaviour
         {
             ProcessInputs();
 
-            if (_characterMovementGroundModule is not null)
+            if (_charMovementGroundModule is not null)
             {
-                _characterMovementGroundModule.SetMoveVector(_move);
+                _charMovementGroundModule.SetMoveVector(_move);
 
-                if (_sprint) _characterMovementGroundModule.Sprint();
-                if (_walk) _characterMovementGroundModule.Walk();
-                if (_jump) _characterMovementGroundModule.Jump();
-                if (_crouch) _characterMovementGroundModule.Crouch();
-                if (_prone) _characterMovementGroundModule.Prone();
+                if (_sprint) _charMovementGroundModule.Sprint();
+                if (_walk) _charMovementGroundModule.Walk();
+                if (_jump) _charMovementGroundModule.Jump();
+                if (_crouch) _charMovementGroundModule.Crouch();
+                if (_prone) _charMovementGroundModule.Prone();
             }
 
             CharacterView charView = _character.charView;
@@ -71,33 +73,36 @@ class PlayerInputs : PlayerBehaviour
                 charView.SetLookVector(_look);
             }
 
-            CharacterObjectHandler charObjHandler = _character.charObjectHandler;
-            if (charObjHandler is not null)
+            // if (_weapon1) _charInteration.SwitchToWeapon1();
+            // else if (_weapon2) _charInteration.SwitchToWeapon2();
+            // else if (_weapon3) _charInteration.SwitchToWeapon3();
+
+            // if (_grenade1) _charInteration.SwitchToGrenade1();
+            // else if (_grenade2) _charInteration.SwitchToGrenade2();
+
+            // if (_interact)
+            // {
+            //     Interactable interactable = _playerInteraction.GetInteractable();
+            //     if (interactable is not null)
+            //     {
+            //         Equipable equipable = interactable as Equipable;
+            //         if (equipable is not null)
+            //         {
+            //             _charInteration.Pick(equipable);
+            //         }
+            //     }
+            // }
+
+            var interactionModule = _charInteration.GetActiveModule()
+                as CharacterInteractionModuleForReloadableWeapon;
+            if (interactionModule is not null)
             {
-                if (_weapon1) charObjHandler.SwitchToWeapon1();
-                else if (_weapon2) charObjHandler.SwitchToWeapon2();
-                else if (_weapon3) charObjHandler.SwitchToWeapon3();
+                if (_leftFire) interactionModule.Fire();
 
-                if (_grenade1) charObjHandler.SwitchToGrenade1();
-                else if (_grenade2) charObjHandler.SwitchToGrenade2();
+                if (_rightFire) interactionModule.ScopeIn();
+                else interactionModule.ScopeOut();
 
-                if (_leftFire) charObjHandler.FireLeftWeapon();
-                if (_rightFire) charObjHandler.FireRightWeapon();
-
-                if (_reload) charObjHandler.ReloadRightWeapon();
-
-                if (_interact)
-                {
-                    Interactable interactable = _playerInteraction.GetInteractable();
-                    if (interactable is not null)
-                    {
-                        Equipable equipable = interactable as Equipable;
-                        if (equipable is not null)
-                        {
-                            charObjHandler.Pick(equipable);
-                        }
-                    }
-                }
+                if (_reload) interactionModule.StartReload();
             }
         }
     }

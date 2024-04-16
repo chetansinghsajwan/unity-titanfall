@@ -5,7 +5,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CharacterBody))]
 [RequireComponent(typeof(CharacterInventory))]
 [RequireComponent(typeof(CharacterMovement))]
-[RequireComponent(typeof(CharacterObjectHandler))]
+[RequireComponent(typeof(CharacterInteraction))]
 [RequireComponent(typeof(CharacterView))]
 [RequireComponent(typeof(CharacterPresentation))]
 class Character : Equipable
@@ -18,7 +18,7 @@ class Character : Equipable
         _charBody = null;
         _charInventory = null;
         _charMovement = null;
-        _charObjectHandler = null;
+        _charInteraction = null;
         _charView = null;
         _charPresentation = null;
         _controller = null;
@@ -124,7 +124,7 @@ class Character : Equipable
         _charBody = _GetBehaviour<CharacterBody>();
         _charInventory = _GetBehaviour<CharacterInventory>();
         _charMovement = _GetBehaviour<CharacterMovement>();
-        _charObjectHandler = _GetBehaviour<CharacterObjectHandler>();
+        _charInteraction = _GetBehaviour<CharacterInteraction>();
         _charView = _GetBehaviour<CharacterView>();
         _charPresentation = _GetBehaviour<CharacterPresentation>();
     }
@@ -236,7 +236,7 @@ class Character : Equipable
     public CharacterBody charBody => _charBody;
     public CharacterInventory charInventory => _charInventory;
     public CharacterMovement charMovement => _charMovement;
-    public CharacterObjectHandler charObjectHandler => _charObjectHandler;
+    public CharacterInteraction charInteraction => _charInteraction;
     public CharacterView charView => _charView;
     public CharacterPresentation charAnimation => _charPresentation;
     public Quaternion rotation => transform.rotation;
@@ -256,7 +256,7 @@ class Character : Equipable
     protected CharacterBody _charBody;
     protected CharacterInventory _charInventory;
     protected CharacterMovement _charMovement;
-    protected CharacterObjectHandler _charObjectHandler;
+    protected CharacterInteraction _charInteraction;
     protected CharacterView _charView;
     protected CharacterPresentation _charPresentation;
     protected float _charMass;
