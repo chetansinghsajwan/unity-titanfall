@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-class CharacterObjectHandler : CharacterBehaviour
+class CharacterInteraction : CharacterBehaviour
 {
     [Serializable]
     protected struct EquipData
@@ -27,7 +27,7 @@ class CharacterObjectHandler : CharacterBehaviour
         UnequipFinish
     }
 
-    public CharacterObjectHandler()
+    public CharacterInteraction()
     {
         _leftCurrent = EquipData.empty;
         _leftNext = EquipData.empty;
@@ -106,84 +106,55 @@ class CharacterObjectHandler : CharacterBehaviour
         LeftHandUpdate();
         RightHandUpdate();
 
-        ResetInputs();
+        // ResetInputs();
     }
 
-    //////////////////////////////////////////////////////////////////
-    /// Inputs | BEGIN
-
-    protected virtual void ResetInputs()
+    public bool CanInteractWith(Interactable interactable)
     {
-        _weaponSlot = -1;
-        _grenadeSlot = -1;
-        _leftFire = false;
-        _rightFire = false;
-        _sight = false;
-        _rightReload = false;
-        _toEquip = null;
+        return _GetInteractionModuleFor(interactable) != null;
     }
 
-    public virtual void SwitchToHands()
+    public CharacterInteractionModule TryInteractWith(Interactable interactable)
     {
+        CharacterInteractionModule module = _GetInteractionModuleFor(interactable);
+        if (module is null)
+            return null;
+
+        if (_activeModule is not null)
+        {
+            _activeModule.OnDeactivate();
+        }
+
+        _activeModule = module;
+        _activeModule.OnActivate(this);
+        return _activeModule;
     }
 
-    public virtual void SwitchToWeapon1()
+    public bool TryUinteract()
     {
-        _weaponSlot = 0;
+        if (_activeModule is null)
+            return true;
+
+        _activeModule.OnDeactivate();
+        return true;
     }
 
-    public virtual void SwitchToWeapon2()
+    public CharacterInteractionModule GetActiveModule()
     {
-        _weaponSlot = 1;
+        return _activeModule;
     }
 
-    public virtual void SwitchToWeapon3()
+    protected CharacterInteractionModule _GetInteractionModuleFor(Interactable interactable)
     {
-        _weaponSlot = 2;
-    }
+        foreach (CharacterInteractionModuleAsset moduleAsset in _charAsset.interationModules)
+        {
+            CharacterInteractionModule module = moduleAsset.CreateModuleFor(interactable);
+            if (module is not null)
+                return module;
+        }
 
-    public virtual void SwitchToGrenade1()
-    {
-        _grenadeSlot = 0;
+        return null;
     }
-
-    public virtual void SwitchToGrenade2()
-    {
-        _grenadeSlot = 1;
-    }
-
-    public virtual void ReloadLeftWeapon()
-    {
-        _rightReload = true;
-    }
-
-    public virtual void ReloadRightWeapon()
-    {
-        _rightReload = true;
-    }
-
-    public virtual void FireLeftWeapon()
-    {
-        _leftFire = true;
-    }
-
-    public virtual void FireRightWeapon()
-    {
-        _rightFire = true;
-    }
-
-    public virtual void SightWeapon()
-    {
-        _sight = true;
-    }
-
-    public virtual void Pick(Equipable equipable)
-    {
-        _toEquip = equipable;
-    }
-
-    /// Inputs | END
-    //////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////
     /// Left Hand | BEGIN
@@ -828,4 +799,7 @@ class CharacterObjectHandler : CharacterBehaviour
     protected bool _sight;
     protected bool _rightReload;
     protected Equipable _toEquip;
+
+    protected CharacterAsset _charAsset;
+    protected CharacterInteractionModule _activeModule;
 }
