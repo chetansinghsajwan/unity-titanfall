@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = MENU_PATH + MENU_NAME, fileName = FILE_NAME)]
-partial class CharacterAsset : DataAsset
+class CharacterAsset : DataAsset
 {
     public const string MENU_PATH = "Character/";
     public const string MENU_NAME = "Character Asset";
@@ -10,21 +10,21 @@ partial class CharacterAsset : DataAsset
 
     public CharacterAsset()
     {
-        _instanceHandler = new InstanceHandler(this);
+        _factory = new CharacterFactory(this);
     }
 
     public override void OnLoad()
     {
         base.OnLoad();
 
-        _instanceHandler.CreatePool();
+        _factory.CreatePool();
     }
 
     public override void OnUnload()
     {
         base.OnUnload();
 
-        _instanceHandler.DisposePool();
+        _factory.DisposePool();
     }
 
     [Space]
@@ -151,4 +151,11 @@ partial class CharacterAsset : DataAsset
     [Header("Interaction")]
 
     public CharacterInteractionModuleAsset[] interationModules;
+
+    /// --------------------------------------------------------------------------------------------
+    /// Factory
+    /// --------------------------------------------------------------------------------------------
+
+    private CharacterFactory _factory;
+    public CharacterFactory factory => _factory;
 }

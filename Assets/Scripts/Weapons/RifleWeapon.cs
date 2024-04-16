@@ -13,9 +13,9 @@ class RifleWeapon : ReloadableWeapon
     {
         base._Init(initializer);
 
-        _bulletSource = initializer.bulletDataSource;
+        _bulletSource = initializer.bulletDataAsset;
 
-        _asset = initializer.source as RifleWeaponAsset;
+        _asset = initializer.weaponAsset as RifleWeaponAsset;
         if (_asset is not null)
         {
             _bulletSource = _asset.bulletSource;
