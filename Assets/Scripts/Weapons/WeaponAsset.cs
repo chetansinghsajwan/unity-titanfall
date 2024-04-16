@@ -52,7 +52,7 @@ abstract class WeaponAsset : DataAsset
     {
         WeaponInitializer initializer = go.AddComponent<WeaponInitializer>();
         initializer.destroyAfterUse = true;
-        initializer.source = this;
+        initializer.weaponAsset = this;
 
         return initializer;
     }

@@ -41,12 +41,11 @@ class TrainingLevel : BasicLevelAsset
                     throw new UnityException();
                 }
 
-                var charInstanceHandler = charAsset.instanceHandler;
-                charInstanceHandler.SetMaxReserve(5);
-                charInstanceHandler.Reserve(4);
+                var charFactory = charAsset.factory;
+                charFactory.SetMaxReserve(5);
+                charFactory.Reserve(4);
 
-                Character character = charInstanceHandler.Create(
-                    spawnPoint.position, spawnPoint.rotation);
+                Character character = charFactory.Create(spawnPoint.position, spawnPoint.rotation);
 
                 logger.Information("Created Character");
                 localPlayer.Possess(character);

@@ -3,13 +3,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 class WeaponInitializer : MonoBehaviour
 {
-    public bool destroyAfterUse;
-    public WeaponAsset source;
-    public WeaponBulletAsset bulletDataSource;
-
-    public WeaponInitializer()
-    {
-        destroyAfterUse = false;
-        source = null;
-    }
+    public bool destroyAfterUse = false;
+    public WeaponAsset weaponAsset = null;
+    public WeaponBulletAsset bulletDataAsset = null;
 }

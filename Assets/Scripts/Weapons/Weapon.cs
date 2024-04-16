@@ -34,7 +34,7 @@ abstract class Weapon : Equipable
 
     protected virtual void _Init(WeaponInitializer initializer)
     {
-        _asset = initializer.source as WeaponAsset;
+        _asset = initializer.weaponAsset as WeaponAsset;
     }
 
     public WeaponAsset asset => _asset;

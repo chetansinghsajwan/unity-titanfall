@@ -616,7 +616,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
     protected const float _MIN_SLOPE_ANGLE = 0f;
     protected const float _MAX_SLOPE_ANGLE = 89.9f;
 
-    protected CharacterMovementGroundModuleAsset _source;
+    protected CharacterMovementGroundModuleAsset _moduleAsset;
     protected CharacterView _charView;
     protected CharacterCapsule _charCapsule;
     protected GroundResult _groundResult;
