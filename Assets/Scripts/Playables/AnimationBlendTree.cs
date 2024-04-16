@@ -10,7 +10,7 @@ namespace UnityEngine.Playables
         public Playable CreatePlayable();
     }
 
-    public abstract class AnimationBlendTree<TPosition> : IBlendTreeElement
+    abstract class AnimationBlendTree<TPosition> : IBlendTreeElement
         where TPosition : struct, IEquatable<TPosition>
     {
         //// ---------------------------------------------------------------------------------------

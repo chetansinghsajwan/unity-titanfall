@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 
 [CustomPropertyDrawer(typeof(VectorBool))]
-public class VectorBoolPropertyDrawer : PropertyDrawer
+class VectorBoolPropertyDrawer : PropertyDrawer
 {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public abstract class Projectile : MonoBehaviour
+abstract class Projectile : MonoBehaviour
 {
     public void Launch(float force)
     {

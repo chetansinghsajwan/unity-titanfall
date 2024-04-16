@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public abstract class AssetRegistry<T> : ObjectRegistry<T>
+abstract class AssetRegistry<T> : ObjectRegistry<T>
     where T : DataAsset
 {
     protected override void _OnAssetLoad(T asset)

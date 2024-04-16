@@ -2,7 +2,7 @@
 using UnityEngine;
 using GameFramework.Extensions;
 
-public partial class CharacterMovement
+partial class CharacterMovement
 {
     public abstract class Module
     {
@@ -315,9 +315,9 @@ public partial class CharacterMovement
     }
 }
 
-public abstract class CharacterMovementModule : CharacterMovement.Module { }
+abstract class CharacterMovementModule : CharacterMovement.Module { }
 
-public abstract class CharacterMovementModuleSource : ScriptableObject
+abstract class CharacterMovementModuleSource : ScriptableObject
 {
     public const string MENU_PATH = "CharacterMovement/";
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Interactable : MonoBehaviour
+class Interactable : MonoBehaviour
 {
     public static Interactable GetInteractable(Collider collider)
     {

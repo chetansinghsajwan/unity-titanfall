@@ -4,7 +4,7 @@ using GameFramework;
 using GameFramework.Logging;
 
 // [RegisterGameSystem(typeof(PlayerManagerSystem))]
-public class PlayerManagerSystem : GameSystem
+class PlayerManagerSystem : GameSystem
 {
     protected override void OnRegistered(GameSystem system)
     {

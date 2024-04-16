@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class PlayerCamera : PlayerBehaviour
+class PlayerCamera : PlayerBehaviour
 {
     protected Character _character;
 

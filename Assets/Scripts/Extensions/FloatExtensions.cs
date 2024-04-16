@@ -3,7 +3,7 @@
 /// <summary>
 /// Float extensions.
 /// </summary>
-public static class FloatExtensions
+static class FloatExtensions
 {
     /// <summary>
     /// Is floatA equal to zero? Takes floating point inaccuracy into account, by using Epsilon.

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BulletProjectile : Projectile
+class BulletProjectile : Projectile
 {
     [Label("Max Speed"), SerializeField]
     protected float _maxSpeed = 0f;

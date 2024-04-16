@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerInteraction : PlayerBehaviour
+class PlayerInteraction : PlayerBehaviour
 {
     [SerializeField] protected LayerMask _layerMask;
     [SerializeField] protected QueryTriggerInteraction _triggerQuery;

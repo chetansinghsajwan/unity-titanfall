@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class Equipable : Interactable
+abstract class Equipable : Interactable
 {
     [Header("EQUIPABLE"), Space]
     [SerializeField] 

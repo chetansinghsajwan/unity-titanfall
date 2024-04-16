@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
-public class LabelAttribute : PropertyAttribute
+class LabelAttribute : PropertyAttribute
 {
     public string NewName { get; private set; }
     public LabelAttribute(string name)
@@ -11,7 +11,7 @@ public class LabelAttribute : PropertyAttribute
 }
 
 [CustomPropertyDrawer(typeof(LabelAttribute))]
-public class LabelEditor : PropertyDrawer
+class LabelEditor : PropertyDrawer
 {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {

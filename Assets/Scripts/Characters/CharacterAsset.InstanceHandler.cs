@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 
-public partial class CharacterAsset : DataAsset
+partial class CharacterAsset : DataAsset
 {
     protected InstanceHandler _instanceHandler;
     public InstanceHandler instanceHandler => _instanceHandler;

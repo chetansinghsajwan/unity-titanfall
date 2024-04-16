@@ -5,7 +5,7 @@ using GameFramework.Logging;
 
 using UnityObject = UnityEngine.Object;
 
-public abstract class ObjectRegistry<T>
+abstract class ObjectRegistry<T>
     where T : UnityObject
 {
     public delegate void OnAssetRegisteredDelegate(T asset);

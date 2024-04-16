@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using GameFramework.LevelManagement;
 
-public class EditorLevelInitializer : MonoBehaviour
+class EditorLevelInitializer : MonoBehaviour
 {
     static bool isInitDone = false;
 

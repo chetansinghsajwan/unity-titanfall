@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class RifleWeapon : ReloadableWeapon
+class RifleWeapon : ReloadableWeapon
 {
     [NonSerialized]
     protected new RifleWeaponAsset _asset;

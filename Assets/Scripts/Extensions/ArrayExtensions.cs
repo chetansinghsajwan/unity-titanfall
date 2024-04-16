@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace System
 {
-    public static class ArrayExtensions
+    static class ArrayExtensions
     {
         public static bool ValidateRange<T>(this T[] arr, int index)
         {

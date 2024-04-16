@@ -5,7 +5,7 @@ using UnityEngine.AddressableAssets;
 #if UNITY_EDITOR
 
 [Serializable]
-public class AssetReferenceScene : AssetReferenceT<SceneAsset>
+class AssetReferenceScene : AssetReferenceT<SceneAsset>
 {
     public AssetReferenceScene(string guid) : base(guid) { }
 }
@@ -13,6 +13,6 @@ public class AssetReferenceScene : AssetReferenceT<SceneAsset>
 #else
 
 [Serializable]
-public class AssetReferenceScene : AssetReference { }
+class AssetReferenceScene : AssetReference { }
 
 #endif

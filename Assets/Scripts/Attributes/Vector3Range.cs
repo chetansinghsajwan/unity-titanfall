@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 
 [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
-public class Vector3RangeAttribute : PropertyAttribute
+class Vector3RangeAttribute : PropertyAttribute
 {
     public Vector3 min { get; protected set; }
     public Vector3 max { get; protected set; }
@@ -38,7 +38,7 @@ public class Vector3RangeAttribute : PropertyAttribute
 }
 
 [CustomPropertyDrawer(typeof(Vector3RangeAttribute))]
-public class Vector3RangeEditor : PropertyDrawer
+class Vector3RangeEditor : PropertyDrawer
 {
     protected float height = 0f;
 

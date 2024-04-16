@@ -3,7 +3,7 @@ using System.Collections;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Projectile))]
-public abstract class Grenade : Equipable
+abstract class Grenade : Equipable
 {
     public Grenade()
     {

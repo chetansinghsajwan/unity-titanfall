@@ -4,7 +4,7 @@ using GameFramework.Extensions;
 using UnityEngine;
 using UnityEngine.Playables;
 
-public class CharacterMovementGroundModule : CharacterMovementModule
+class CharacterMovementGroundModule : CharacterMovementModule
 {
     protected struct GroundResult
     {

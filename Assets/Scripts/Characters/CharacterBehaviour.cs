@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Character))]
-public abstract class CharacterBehaviour : MonoBehaviour
+abstract class CharacterBehaviour : MonoBehaviour
 {
     public Character character => _character;
     protected Character _character;

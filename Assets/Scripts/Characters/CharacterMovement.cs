@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 [RequireComponent(typeof(CapsuleCollider))]
-public partial class CharacterMovement : CharacterBehaviour
+partial class CharacterMovement : CharacterBehaviour
 {
     public override void OnCharacterCreate(Character character, CharacterInitializer initializer)
     {

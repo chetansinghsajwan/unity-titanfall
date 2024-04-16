@@ -8,7 +8,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CharacterObjectHandler))]
 [RequireComponent(typeof(CharacterView))]
 [RequireComponent(typeof(CharacterPresentation))]
-public class Character : Equipable
+class Character : Equipable
 {
     public Character()
     {

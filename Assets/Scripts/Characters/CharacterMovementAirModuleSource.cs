@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [CreateAssetMenu(menuName = MENU_PATH + "Air Module")]
-public class CharacterMovementAirModuleSource : CharacterMovementModuleSource
+class CharacterMovementAirModuleSource : CharacterMovementModuleSource
 {
     [SerializeField] public float gravityAcceleration;
     [SerializeField] public float gravityMaxSpeed;

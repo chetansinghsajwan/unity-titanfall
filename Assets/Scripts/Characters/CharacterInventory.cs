@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class CharacterInventory : CharacterBehaviour
+class CharacterInventory : CharacterBehaviour
 {
     [Serializable]
     protected struct WeaponSlot

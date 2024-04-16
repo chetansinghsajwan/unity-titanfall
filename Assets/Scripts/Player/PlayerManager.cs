@@ -1,4 +1,4 @@
-public static class PlayerManager
+static class PlayerManager
 {
     public static PlayerManagerSystem System;
 

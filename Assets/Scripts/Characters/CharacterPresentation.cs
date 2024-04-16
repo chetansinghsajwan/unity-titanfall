@@ -4,7 +4,7 @@ using UnityEngine.Animations;
 using UnityEngine.Playables;
 
 [RequireComponent(typeof(Animator))]
-public class CharacterPresentation : CharacterBehaviour
+class CharacterPresentation : CharacterBehaviour
 {
     public override void OnCharacterCreate(Character character, CharacterInitializer initializer)
     {

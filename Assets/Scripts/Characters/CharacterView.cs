@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class CharacterView : CharacterBehaviour
+class CharacterView : CharacterBehaviour
 {
     //////////////////////////////////////////////////////////////////
     /// Types
