@@ -66,9 +66,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _standSprintRightAngleMax = charAsset.groundStandSprintRightAngleMax;
         _standJumpForce = charAsset.groundStandJumpForce;
         _standStepUpPercent = charAsset.groundStandStepUpPercent;
-        _standStepUpHeight = _capsule.height * _standStepUpPercent / 100f;
+        _standStepUpHeight = _charCapsule.capsule.height * _standStepUpPercent / 100f;
         _standStepDownPercent = charAsset.groundStandStepDownPercent;
-        _standStepDownHeight = _capsule.height * _standStepDownPercent / 100f;
+        _standStepDownHeight = _charCapsule.capsule.height * _standStepDownPercent / 100f;
         _standSlopeUpAngle = charAsset.groundStandSlopeUpAngle;
         _standSlopeDownAngle = charAsset.groundStandSlopeDownAngle;
         _standMaintainVelocityOnSurface = charAsset.groundStandMaintainVelocityOnSurface;
@@ -85,9 +85,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _crouchRunAcceleration = charAsset.groundCrouchRunAcceleration;
         _crouchJumpForce = charAsset.groundCrouchJumpForce;
         _crouchStepUpPercent = charAsset.groundCrouchStepUpPercent;
-        _crouchStepUpHeight = _capsule.height * _crouchStepUpPercent / 100f;
+        _crouchStepUpHeight = _charCapsule.capsule.height * _crouchStepUpPercent / 100f;
         _crouchStepDownPercent = charAsset.groundCrouchStepDownPercent;
-        _crouchStepUpHeight = _capsule.height * _crouchStepUpPercent / 100f;
+        _crouchStepUpHeight = _charCapsule.capsule.height * _crouchStepUpPercent / 100f;
         _crouchSlopeUpAngle = charAsset.groundCrouchSlopeUpAngle;
         _crouchSlopeDownAngle = charAsset.groundCrouchSlopeDownAngle;
         _crouchMaintainVelocityOnSurface = charAsset.groundCrouchMaintainVelocityOnSurface;
@@ -141,8 +141,11 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _charRight = _character.right;
         _charForward = _character.forward;
         _velocity = _charMovement.velocity;
-        _capsule = _charMovement.capsule;
-        _skinWidth = _charMovement.skinWidth;
+        _charCapsule = new CharacterCapsule(){
+            capsule = _charMovement.capsule,
+            skinWidth = _charMovement.skinWidth,
+            collider = _charMovement.collider,
+        };
         _deltaTime = Time.deltaTime;
 
         _RecoverFromBaseMove();
@@ -164,7 +167,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _lastMovementState = _movementState;
         _lastLocomotionState = _locomotionState;
 
-        result = _capsule;
+        result = _charCapsule.capsule;
     }
 
     //// -------------------------------------------------------------------------------------------
@@ -320,7 +323,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         // perform the vertical move (usually jump)
         if (moveVMag > 0f)
         {
-            CapsuleMove(moveV);
+            _charCapsule.CapsuleMove(moveV);
         }
 
         if (remainingMove.magnitude > _minMoveDistance)
@@ -332,11 +335,11 @@ class CharacterMovementGroundModule : CharacterMovementModule
             var positionBeforeStepUp = Vector3.zero;
             var moveBeforeStepUp = Vector3.zero;
 
-            CapsuleResolvePenetration();
+            _charCapsule.CapsuleResolvePenetration();
 
             for (uint it = 0; it < _MAX_MOVE_ITERATIONS; it++)
             {
-                remainingMove -= CapsuleMove(remainingMove, out RaycastHit moveHit, out Vector3 moveHitNormal);
+                remainingMove -= _charCapsule.CapsuleMove(remainingMove, out RaycastHit moveHit, out Vector3 moveHitNormal);
 
                 // perform step up recover
                 if (didStepUp && !didStepUpRecover)
@@ -344,7 +347,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
                     didStepUp = false;
                     didStepUpRecover = true;
 
-                    CapsuleMove(_character.down * stepUpHeight, out RaycastHit stepUpRecoverHit, out Vector3 stepUpRecoverHitNormal);
+                    _charCapsule.CapsuleMove(_character.down * stepUpHeight, out RaycastHit stepUpRecoverHit, out Vector3 stepUpRecoverHitNormal);
 
                     if (stepUpRecoverHit.collider)
                     {
@@ -354,7 +357,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
                         {
                             if (baseAngle < 90f)
                             {
-                                _capsule.position = positionBeforeStepUp;
+                                _charCapsule.capsule.position = positionBeforeStepUp;
                                 remainingMove = moveBeforeStepUp;
                                 canStepUp = false;
 
@@ -383,10 +386,10 @@ class CharacterMovementGroundModule : CharacterMovementModule
                     canStepUp = false;
                     didStepUp = true;
                     didStepUpRecover = false;
-                    positionBeforeStepUp = _capsule.position;
+                    positionBeforeStepUp = _charCapsule.capsule.position;
                     moveBeforeStepUp = remainingMove;
 
-                    stepUpHeight = CapsuleMove(_charUp * _stepUpHeight).magnitude;
+                    stepUpHeight = _charCapsule.CapsuleMove(_charUp * _stepUpHeight).magnitude;
 
                     continue;
                 }
@@ -403,14 +406,14 @@ class CharacterMovementGroundModule : CharacterMovementModule
         }
 
         _StepDown(originalMove);
-        CapsuleResolvePenetration();
+        _charCapsule.CapsuleResolvePenetration();
     }
 
     protected void _RecoverFromBaseMove()
     {
         if (_baseDeltaPosition != Vector3.zero)
         {
-            _capsule.position += _baseDeltaPosition;
+            _charCapsule.capsule.position += _baseDeltaPosition;
             _baseDeltaPosition = Vector3.zero;
         }
 
@@ -441,9 +444,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
         }
 
         // charCapsule.localPosition += charCapsule.up * Mathf.MoveTowards(charCapsule.localHeight, targetHeight, speed);
-        // _capsule.center = Vector3.Lerp(mCapsule.center, targetCenter, speed);
-        _capsule.height = Mathf.Lerp(_capsule.height, targetHeight, speed);
-        _capsule.radius = Mathf.Lerp(_capsule.radius, targetRadius, speed);
+        // _charCapsule.capsule.center = Vector3.Lerp(mCapsule.center, targetCenter, speed);
+        _charCapsule.capsule.height = Mathf.Lerp(_charCapsule.capsule.height, targetHeight, speed);
+        _charCapsule.capsule.radius = Mathf.Lerp(_charCapsule.capsule.radius, targetRadius, speed);
 
         weight = Mathf.Lerp(weight, 1f, speed);
         // _movementStateWeight = weight;
@@ -486,7 +489,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         if (hit.collider is null || remainingMoveSize == 0f)
             return false;
 
-        RecalculateNormalIfZero(hit, ref hitNormal);
+        _charCapsule.RecalculateNormalIfZero(hit, ref hitNormal);
 
         Vector3 hitProject = Vector3.ProjectOnPlane(hitNormal, _charUp);
         Vector3 slideMove = Vector3.ProjectOnPlane(originalMove.normalized * remainingMoveSize, hitProject);
@@ -510,13 +513,13 @@ class CharacterMovementGroundModule : CharacterMovementModule
         if (verticalMove != 0f || _stepDownDepth <= 0)
             return false;
 
-        CapsuleResolvePenetration();
+        _charCapsule.CapsuleResolvePenetration();
 
-        var moved = CapsuleMove(_character.down * _stepDownDepth, out RaycastHit hit, out Vector3 hitNormal);
+        var moved = _charCapsule.CapsuleMove(_character.down * _stepDownDepth, out RaycastHit hit, out Vector3 hitNormal);
 
         if (_CanStandOn(hit, hitNormal) == false)
         {
-            _capsule.position -= moved;
+            _charCapsule.capsule.position -= moved;
             return false;
         }
 
@@ -554,7 +557,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
                 return false;
             }
 
-            RecalculateNormalIfZero(hit, ref slopeNormal);
+            _charCapsule.RecalculateNormalIfZero(hit, ref slopeNormal);
 
             slopeAngle = Vector3.Angle(_charUp, slopeNormal);
             if (slopeAngle >= _MIN_SLOPE_ANGLE && slopeAngle <= _maxSlopeUpAngle)
@@ -568,7 +571,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
 
     protected bool _CastForGround(float depth, out GroundResult result)
     {
-        BaseSphereCast(_character.down * depth, out RaycastHit hit, out Vector3 hitNormal);
+        _charCapsule.BaseSphereCast(_character.down * depth, out RaycastHit hit, out Vector3 hitNormal);
         if (hitNormal == Vector3.zero)
         {
             hitNormal = hit.normal;
@@ -615,6 +618,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
 
     protected CharacterMovementGroundModuleAsset _source;
     protected CharacterView _charView;
+    protected CharacterCapsule _charCapsule;
     protected GroundResult _groundResult;
     protected GroundResult _prevGroundResult;
 
