@@ -121,6 +121,7 @@ class CharacterMovement : CharacterBehaviour
     public CharacterMovementModule previousModule => _previousModule;
 
     protected CapsuleCollider _collider;
+    public new CapsuleCollider collider => _collider;
 
     protected float _skinWidth;
     public float skinWidth => _skinWidth;

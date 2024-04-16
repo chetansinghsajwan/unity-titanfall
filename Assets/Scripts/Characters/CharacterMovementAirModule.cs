@@ -38,8 +38,11 @@ class CharacterMovementAirModule : CharacterMovementModule
         _charRight = _character.right;
         _charForward = _character.forward;
         _velocity = _charMovement.velocity;
-        _capsule = _charMovement.capsule;
-        _skinWidth = _charMovement.skinWidth;
+        _charCapsule = new CharacterCapsule(){
+            capsule = _charMovement.capsule,
+            skinWidth = _charMovement.skinWidth,
+            collider = _charMovement.collider,
+        };
         _deltaTime = Time.deltaTime;
 
         UpdateValues();
@@ -118,7 +121,7 @@ class CharacterMovementAirModule : CharacterMovementModule
         Vector3 move = moveH + moveV;
 
         PerformMove(move);
-        result = _capsule;
+        result = _charCapsule.capsule;
     }
 
     protected virtual void UpdateGroundModule()
@@ -154,7 +157,7 @@ class CharacterMovementAirModule : CharacterMovementModule
 
         for (int i = 0; i < AIR_MAX_MOVE_ITERATIONS; i++)
         {
-            remainingMove -= CapsuleMove(remainingMove, out RaycastHit hit, out Vector3 hitNormal);
+            remainingMove -= _charCapsule.CapsuleMove(remainingMove, out RaycastHit hit, out Vector3 hitNormal);
 
             if (hit.collider is null)
             {
@@ -172,7 +175,7 @@ class CharacterMovementAirModule : CharacterMovementModule
         if (hit.collider is null || remainingMove == Vector3.zero)
             return;
 
-        RecalculateNormalIfZero(hit, ref hitNormal);
+        _charCapsule.RecalculateNormalIfZero(hit, ref hitNormal);
 
         bool canStandOnGround = _groundModule is not null &&
          _groundModule.CanStandOnGround(hit, hitNormal, out float slopeAngle);
@@ -195,6 +198,7 @@ class CharacterMovementAirModule : CharacterMovementModule
     }
 
     protected CharacterMovementGroundModule _groundModule;
+    protected CharacterCapsule _charCapsule;
 
     protected float _gravityAcceleration;
     protected float _gravityMaxSpeed;
