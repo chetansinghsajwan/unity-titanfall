@@ -250,6 +250,7 @@ class Character : Equipable
     public float scaledMass => transform.lossyScale.magnitude * _charMass;
     public Controller controller => _controller;
 
+    protected CharacterAsset _charAsset;
     protected Controller _controller;
     protected CharacterBehaviour[] _behaviours;
     protected CharacterInitializer _charInitializer;
@@ -260,5 +261,4 @@ class Character : Equipable
     protected CharacterView _charView;
     protected CharacterPresentation _charPresentation;
     protected float _charMass;
-    private CharacterAsset _charAsset;
 }

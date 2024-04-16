@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 [RequireComponent(typeof(CapsuleCollider))]
-partial class CharacterMovement : CharacterBehaviour
+class CharacterMovement : CharacterBehaviour
 {
     public override void OnCharacterCreate(Character character, CharacterInitializer initializer)
     {
@@ -101,10 +101,7 @@ partial class CharacterMovement : CharacterBehaviour
             }
         }
 
-        if (_activeModule is not null)
-        {
-            _activeModule.RunPhysics();
-        }
+        _activeModule.RunPhysics(out _capsule);
     }
 
     protected virtual void PostUpdateModules()
@@ -126,6 +123,8 @@ partial class CharacterMovement : CharacterBehaviour
     protected CapsuleCollider _collider;
 
     protected float _skinWidth;
+    public float skinWidth => _skinWidth;
+    
     protected VirtualCapsule _capsule;
     public VirtualCapsule capsule => _capsule;
 

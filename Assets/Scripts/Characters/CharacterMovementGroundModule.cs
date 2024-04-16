@@ -106,15 +106,12 @@ class CharacterMovementGroundModule : CharacterMovementModule
     {
         base.OnLoaded(charMovement);
 
-        if (_character is not null)
-        {
-            _charView = _character.charView;
-        }
+        _charView = _character.charView;
     }
 
-    public override void OnUnloaded(CharacterMovement charMovement)
+    public override void OnUnloaded()
     {
-        base.OnUnloaded(charMovement);
+        base.OnUnloaded();
 
         _charView = null;
     }
@@ -138,13 +135,17 @@ class CharacterMovementGroundModule : CharacterMovementModule
         return _groundResult.isValid;
     }
 
-    public override void RunPhysics()
+    public override void RunPhysics(out VirtualCapsule result)
     {
-        base.RunPhysics();
+        _charUp = _character.up;
+        _charRight = _character.right;
+        _charForward = _character.forward;
+        _velocity = _charMovement.velocity;
+        _capsule = _charMovement.capsule;
+        _skinWidth = _charMovement.skinWidth;
+        _deltaTime = Time.deltaTime;
 
-        PullPhysicsData();
         _RecoverFromBaseMove();
-
         _UpdateValues();
 
         Vector3 moveInput = new Vector3(_inputMove.x, 0, _inputMove.y);
@@ -163,12 +164,17 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _lastMovementState = _movementState;
         _lastLocomotionState = _locomotionState;
 
-        PushPhysicsData();
+        result = _capsule;
     }
 
     //// -------------------------------------------------------------------------------------------
     //// Commands to control ground movement of character.
     //// -------------------------------------------------------------------------------------------
+
+    public virtual void SetMoveVector(Vector2 move)
+    {
+        _inputMove = move;
+    }
 
     public void Walk()
     {
@@ -607,7 +613,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
     protected const float _MIN_SLOPE_ANGLE = 0f;
     protected const float _MAX_SLOPE_ANGLE = 89.9f;
 
-    protected CharacterMovementGroundModuleSource _source;
+    protected CharacterMovementGroundModuleAsset _source;
     protected CharacterView _charView;
     protected GroundResult _groundResult;
     protected GroundResult _prevGroundResult;
@@ -631,10 +637,12 @@ class CharacterMovementGroundModule : CharacterMovementModule
     protected float _slopeDownAngle = 0;
     protected bool _maintainVelocityOnSurface = true;
     protected bool _maintainVelocityAlongSurface = true;
-
-    //// -------------------------------------------------------------------------------------------
-    //// Cached values from charAsset asset
-    //// -------------------------------------------------------------------------------------------
+    protected Vector3 _charUp;
+    protected Vector3 _charRight;
+    protected Vector3 _charForward;
+    protected Vector3 _velocity;
+    protected float _deltaTime;
+    protected Vector3 _inputMove;
 
     protected readonly LayerMask _groundLayer;
     protected readonly float _minMoveDistance;

@@ -107,3 +107,5 @@ MonoBehaviour:
   animGroundCrouchRunBackward: {fileID: -203655887218126122, guid: 7115c819fa2a0a84683d20ed604f29f7, type: 3}
   animGroundCrouchRunBackwardLeft: {fileID: 0}
   animGroundCrouchRunBackwardRight: {fileID: 0}
+  interationModules:
+  - {fileID: 11400000, guid: 9d46ad9e991aa1b5f9c9a2fcef492480, type: 2}
