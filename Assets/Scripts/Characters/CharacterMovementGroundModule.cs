@@ -566,14 +566,10 @@ class CharacterMovementGroundModule : CharacterMovementModule
         result.collider = hit.collider;
         result.direction = _character.down;
         result.distance = hit.distance;
-
         result.angle = slopeAngle;
-
         result.basePosition = result.collider.transform.position;
         result.baseRotation = result.collider.transform.rotation;
-
         result.edgeDistance = default;
-
         return true;
     }
 
