@@ -172,7 +172,7 @@ struct CharacterCapsule
     public bool RecalculateNormal(RaycastHit hit, out Vector3 normal)
     {
         return hit.RecalculateNormalUsingRaycast(out normal,
-            capsule.layerMask, capsule.queryTrigger);
+            capsule.layerMask, capsule.triggerInteraction);
     }
 
     public bool RecalculateNormal(RaycastHit hit, Vector3 direction, out Vector3 normal)
@@ -183,7 +183,7 @@ struct CharacterCapsule
             const float rayDistance = RECALCULATE_NORMAL_FALLBACK + RECALCULATE_NORMAL_ADDON;
 
             Physics.Raycast(origin, direction, out RaycastHit rayHit,
-                rayDistance, capsule.layerMask, capsule.queryTrigger);
+                rayDistance, capsule.layerMask, capsule.triggerInteraction);
 
             if (rayHit.collider && rayHit.collider == hit.collider)
             {

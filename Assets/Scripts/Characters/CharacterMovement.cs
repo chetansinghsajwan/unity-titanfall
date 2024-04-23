@@ -16,7 +16,7 @@ class CharacterMovement : CharacterBehaviour
             height = 2f,
             radius = .5f,
             layerMask = charAsset.groundLayer,
-            queryTrigger = QueryTriggerInteraction.Ignore
+            triggerInteraction = QueryTriggerInteraction.Ignore
         };
         _skinWidth = .2f;
         _collider = GetComponent<CapsuleCollider>();
