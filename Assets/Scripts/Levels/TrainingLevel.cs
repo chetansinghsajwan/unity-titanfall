@@ -26,35 +26,36 @@ class TrainingLevel : BasicLevelAsset
         Transform spawnPoint = sceneObject.playerSpawnPoints.
             FirstOrDefault(trans => trans is not null);
 
-        if (spawnPoint is not null)
+        if (spawnPoint == null)
         {
-            var localPlayer = PlayerManager.CreateLocalPlayer();
-            if (localPlayer is not null)
-            {
-                string charName = "SwatGuy";
-                CharacterAsset charAsset = await Addressables.LoadAssetAsync<CharacterAsset>(
-                    $"Characters/{charName}").Task;
-
-                if (charAsset is null)
-                {
-                    Debug.LogError($"Could not load character asset, {charName}", this);
-                    throw new UnityException();
-                }
-
-                var charFactory = charAsset.factory;
-                charFactory.SetMaxReserve(5);
-                charFactory.Reserve(4);
-
-                Character character = charFactory.Create(spawnPoint.position, spawnPoint.rotation);
-
-                logger.Information("Created Character");
-                localPlayer.Possess(character);
-            }
-            else
-            {
-                logger.Error("Could not create Local Player");
-            }
+            return;
         }
+
+        var localPlayer = PlayerManager.CreateLocalPlayer();
+        if (localPlayer == null)
+        {
+            logger.Error("Could not create Local Player");
+            return;
+        }
+
+        string charName = "SwatGuy";
+        CharacterAsset charAsset = await Addressables.LoadAssetAsync<CharacterAsset>(
+            $"Characters/{charName}").Task;
+
+        if (charAsset is null)
+        {
+            Debug.LogError($"Could not load character asset, {charName}", this);
+            throw new UnityException();
+        }
+
+        var charFactory = charAsset.factory;
+        charFactory.SetMaxReserve(5);
+        charFactory.Reserve(4);
+
+        Character character = charFactory.Create(spawnPoint.position, spawnPoint.rotation);
+
+        logger.Information("Created Character");
+        localPlayer.Possess(character);
 
         op.SetCompleted();
     }

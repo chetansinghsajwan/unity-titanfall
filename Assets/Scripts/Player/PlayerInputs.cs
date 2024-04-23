@@ -1,10 +1,10 @@
+using System.Diagnostics.Contracts;
 using UnityEngine;
 
 class PlayerInputs : PlayerBehaviour
 {
     protected Character _character = null;
     protected CharacterMovement _charMovement = null;
-    protected CharacterMovementGroundModule _charMovementGroundModule = null;
     protected CharacterInteraction _charInteration = null;
     protected PlayerInteraction _playerInteraction;
 
@@ -32,85 +32,29 @@ class PlayerInputs : PlayerBehaviour
         {
             _character = null;
             _charMovement = null;
-            _charMovementGroundModule = null;
             return;
         }
-        
+
         _character = character;
         _charMovement = _character.charMovement;
         _charInteration = _character.charInteraction;
-
-        foreach (var module in _charMovement.modules)
-        {
-            if (module is CharacterMovementGroundModule)
-            {
-                _charMovementGroundModule = module as CharacterMovementGroundModule;
-                break;
-            }
-        }
     }
 
     public override void OnPlayerUpdate()
     {
-        if (_character is not null)
-        {
-            ProcessInputs();
+        if (_character == null)
+            return;
 
-            if (_charMovementGroundModule is not null)
-            {
-                _charMovementGroundModule.SetMoveVector(_move);
-
-                if (_sprint) _charMovementGroundModule.Sprint();
-                if (_walk) _charMovementGroundModule.Walk();
-                if (_jump) _charMovementGroundModule.Jump();
-                if (_crouch) _charMovementGroundModule.Crouch();
-                if (_prone) _charMovementGroundModule.Prone();
-            }
-
-            CharacterView charView = _character.charView;
-            if (charView is not null)
-            {
-                charView.SetLookVector(_look);
-            }
-
-            // if (_weapon1) _charInteration.SwitchToWeapon1();
-            // else if (_weapon2) _charInteration.SwitchToWeapon2();
-            // else if (_weapon3) _charInteration.SwitchToWeapon3();
-
-            // if (_grenade1) _charInteration.SwitchToGrenade1();
-            // else if (_grenade2) _charInteration.SwitchToGrenade2();
-
-            // if (_interact)
-            // {
-            //     Interactable interactable = _playerInteraction.GetInteractable();
-            //     if (interactable is not null)
-            //     {
-            //         Equipable equipable = interactable as Equipable;
-            //         if (equipable is not null)
-            //         {
-            //             _charInteration.Pick(equipable);
-            //         }
-            //     }
-            // }
-
-            var interactionModule = _charInteration.GetActiveModule()
-                as CharacterInteractionModuleForReloadableWeapon;
-            if (interactionModule is not null)
-            {
-                if (_leftFire) interactionModule.Fire();
-
-                if (_rightFire) interactionModule.ScopeIn();
-                else interactionModule.ScopeOut();
-
-                if (_reload) interactionModule.StartReload();
-            }
-        }
+        _ProcessInputs();
+        _HandleCharacterMovement();
+        _HandleCharacterView();
+        _HandleCharacterInteraction();
     }
 
-    protected virtual void ProcessInputs()
+    protected void _ProcessInputs()
     {
-        _move = GetMoveVector();
-        _look = GetLookVector();
+        _move = _GetMoveVector();
+        _look = _GetLookVector();
         _walk = Input.GetKey(KeyCode.LeftControl);
         _sprint = Input.GetKey(KeyCode.LeftShift);
         _crouch = Input.GetKey(KeyCode.C);
@@ -129,7 +73,7 @@ class PlayerInputs : PlayerBehaviour
         _interact = Input.GetKeyDown(KeyCode.E);
     }
 
-    protected Vector2 GetMoveVector()
+    protected Vector2 _GetMoveVector()
     {
         Vector2 move = Vector2.zero;
         move.y += Input.GetKey(KeyCode.W) ? +1 : 0;
@@ -139,11 +83,93 @@ class PlayerInputs : PlayerBehaviour
         return move;
     }
 
-    protected Vector2 GetLookVector()
+    protected Vector2 _GetLookVector()
     {
         Vector2 look = Vector2.zero;
         look.x = Input.GetAxis("look x");
         look.y = Input.GetAxis("look y");
         return look;
+    }
+
+    protected void _HandleCharacterMovement()
+    {
+        CharacterMovementModule activeModule = _charMovement.activeModule;
+        if (activeModule is CharacterMovementGroundModule)
+        {
+            _HandleCharacterMovementGroundModule(activeModule as CharacterMovementGroundModule);
+        }
+        else if (activeModule is CharacterMovementAirModule)
+        {
+            _HandleCharacterMovementAirModule(activeModule as CharacterMovementAirModule);
+        }
+    }
+
+    protected void _HandleCharacterMovementGroundModule(CharacterMovementGroundModule module)
+    {
+        Contract.Assert(module is not null);
+
+        module.SetMoveVector(_move);
+
+        if (_crouch)
+        {
+            if (_walk) module.SwitchToCrouchWalk();
+            else module.SwitchToCrouchRun();
+        }
+        else
+        {
+            if (_walk) module.SwitchToStandWalk();
+            if (_sprint) module.SwitchToStandSprint();
+            else module.SwitchToStandRun();
+
+            if (_jump) module.Jump();
+        }
+    }
+
+    protected void _HandleCharacterMovementAirModule(CharacterMovementAirModule module)
+    {
+    }
+
+    protected void _HandleCharacterView()
+    {
+        CharacterView charView = _character.charView;
+        if (charView is not null)
+        {
+            charView.SetLookVector(_look);
+        }
+    }
+
+    protected void _HandleCharacterInteraction()
+    {
+        // if (_weapon1) _charInteration.SwitchToWeapon1();
+        // else if (_weapon2) _charInteration.SwitchToWeapon2();
+        // else if (_weapon3) _charInteration.SwitchToWeapon3();
+
+        // if (_grenade1) _charInteration.SwitchToGrenade1();
+        // else if (_grenade2) _charInteration.SwitchToGrenade2();
+
+        // if (_interact)
+        // {
+        //     Interactable interactable = _playerInteraction.GetInteractable();
+        //     if (interactable is not null)
+        //     {
+        //         Equipable equipable = interactable as Equipable;
+        //         if (equipable is not null)
+        //         {
+        //             _charInteration.Pick(equipable);
+        //         }
+        //     }
+        // }
+
+        var interactionModule = _charInteration.GetActiveModule()
+            as CharacterInteractionModuleForReloadableWeapon;
+        if (interactionModule is not null)
+        {
+            if (_leftFire) interactionModule.Fire();
+
+            if (_rightFire) interactionModule.ScopeIn();
+            else interactionModule.ScopeOut();
+
+            if (_reload) interactionModule.StartReload();
+        }
     }
 }

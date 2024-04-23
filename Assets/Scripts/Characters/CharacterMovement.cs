@@ -7,34 +7,31 @@ class CharacterMovement : CharacterBehaviour
     public override void OnCharacterCreate(Character character, CharacterInitializer initializer)
     {
         base.OnCharacterCreate(character, initializer);
+        CharacterAsset charAsset = _character.charAsset;
 
+        _capsule = new VirtualCapsule
+        {
+            position = Vector3.zero,
+            rotation = Quaternion.identity,
+            height = 2f,
+            radius = .5f,
+            layerMask = charAsset.groundLayer,
+            queryTrigger = QueryTriggerInteraction.Ignore
+        };
+        _skinWidth = .2f;
         _collider = GetComponent<CapsuleCollider>();
         _velocity = Vector3.zero;
 
-        CharacterAsset charAsset = _character.charAsset;
-        if (charAsset is not null)
+        var moduleList = new List<CharacterMovementModule>();
+        var groundModule = new CharacterMovementGroundModule(charAsset);
+        var airModule = new CharacterMovementAirModule(charAsset);
+        moduleList.Add(groundModule);
+        moduleList.Add(airModule);
+
+        _modules = moduleList.ToArray();
+        foreach (var module in _modules)
         {
-            _capsule = new VirtualCapsule
-            {
-                position = Vector3.zero,
-                rotation = Quaternion.identity,
-                height = 2f,
-                radius = .5f,
-                layerMask = charAsset.groundLayer,
-                queryTrigger = QueryTriggerInteraction.Ignore
-            };
-
-            var moduleList = new List<CharacterMovementModule>();
-            var groundModule = new CharacterMovementGroundModule(charAsset);
-            var airModule = new CharacterMovementAirModule(charAsset);
-            moduleList.Add(groundModule);
-            moduleList.Add(airModule);
-
-            _modules = moduleList.ToArray();
-            foreach (var module in _modules)
-            {
-                module.OnLoaded(this);
-            }
+            module.OnLoaded(this);
         }
     }
 
@@ -102,6 +99,7 @@ class CharacterMovement : CharacterBehaviour
         }
 
         _activeModule.RunPhysics(out _capsule);
+        _capsule.WriteValuesTo(_collider);
     }
 
     protected virtual void PostUpdateModules()
