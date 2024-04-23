@@ -66,7 +66,7 @@ class CharacterAsset : DataAsset
     public Vector3 groundStandCapsuleCenter;
     public float groundStandCapsuleHeight;
     public float groundStandCapsuleRadius;
-    public float groundStandToCrouchTransitionSpeed;
+    public float groundStandToCrouchResizeSpeed;
     public bool groundStandMaintainVelocityOnSurface;
     public bool groundStandMaintainVelocityAlongSurface;
 
@@ -85,7 +85,7 @@ class CharacterAsset : DataAsset
     public Vector3 groundCrouchCapsuleCenter;
     public float groundCrouchCapsuleHeight;
     public float groundCrouchCapsuleRadius;
-    public float groundCrouchToStandTransitionSpeed;
+    public float groundCrouchToStandResizeSpeed;
     public bool groundCrouchMaintainVelocityOnSurface;
     public bool groundCrouchMaintainVelocityAlongSurface;
 

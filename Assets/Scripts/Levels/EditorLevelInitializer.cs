@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using GameFramework.LevelManagement;
+using GameFramework;
 
 class EditorLevelInitializer : MonoBehaviour
 {
@@ -24,6 +25,8 @@ class EditorLevelInitializer : MonoBehaviour
 
         Debug.Log($"Loading level{level.name}...");
         level.PerformLoad();
+
+        // UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(this.gameObject.scene);
     }
 
     [SerializeField]

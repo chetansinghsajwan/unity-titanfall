@@ -29,23 +29,21 @@ class CharacterMovementAirModule : CharacterMovementModule
 
     public override bool ShouldRun()
     {
+        _charUp = _character.up;
+        _charRight = _character.right;
+        _charForward = _character.forward;
+        _velocity = _charMovement.velocity;
+        _charCapsule.capsule = _charMovement.capsule;
+        _charCapsule.skinWidth = _charMovement.skinWidth;
+        _charCapsule.collider = _charMovement.collider;
+        _deltaTime = Time.deltaTime;
+
         return true;
     }
 
     public override void RunPhysics(out VirtualCapsule result)
     {
-        _charUp = _character.up;
-        _charRight = _character.right;
-        _charForward = _character.forward;
-        _velocity = _charMovement.velocity;
-        _charCapsule = new CharacterCapsule(){
-            capsule = _charMovement.capsule,
-            skinWidth = _charMovement.skinWidth,
-            collider = _charMovement.collider,
-        };
-        _deltaTime = Time.deltaTime;
-
-        UpdateValues();
+        _UpdateValues();
 
         Vector3 charUp = _charUp;
         Vector3 charForward = _character.forward;
@@ -139,7 +137,7 @@ class CharacterMovementAirModule : CharacterMovementModule
         }
     }
 
-    protected virtual void UpdateValues()
+    protected virtual void _UpdateValues()
     {
         _curMoveAccel = _moveAcceleration;
         _curMoveSpeed = _moveSpeed;
