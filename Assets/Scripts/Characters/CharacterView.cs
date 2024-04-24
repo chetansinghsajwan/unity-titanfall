@@ -4,9 +4,6 @@ using UnityEngine;
 [DisallowMultipleComponent]
 class CharacterView : CharacterBehaviour
 {
-    //////////////////////////////////////////////////////////////////
-    /// Types
-
     public enum Mode
     {
         None,
@@ -49,9 +46,9 @@ class CharacterView : CharacterBehaviour
     {
         _stateMachine = new StateMachine<Mode>();
         _stateMachine.Add(Mode.None, null, null, null);
-        _stateMachine.Add(Mode.Eyes, EnterViewMode_Eyes, UpdateViewMode_Eyes, ExitViewMode_Eyes);
-        _stateMachine.Add(Mode.FirstPerson, EnterViewMode_FirstPerson, UpdateViewMode_FirstPerson, ExitViewMode_FirstPerson);
-        _stateMachine.Add(Mode.ThirdPerson, EnterViewMode_ThirdPerson, UpdateViewMode_ThirdPerson, ExitViewMode_ThirdPerson);
+        _stateMachine.Add(Mode.Eyes, _EnterViewMode_Eyes, _UpdateViewMode_Eyes, _ExitViewMode_Eyes);
+        _stateMachine.Add(Mode.FirstPerson, _EnterViewMode_FirstPerson, _UpdateViewMode_FirstPerson, _ExitViewMode_FirstPerson);
+        _stateMachine.Add(Mode.ThirdPerson, _EnterViewMode_ThirdPerson, _UpdateViewMode_ThirdPerson, _ExitViewMode_ThirdPerson);
         _stateMachine.Switch(Mode.None);
     }
 
@@ -69,23 +66,21 @@ class CharacterView : CharacterBehaviour
         _stateMachine.Update();
     }
 
-    public virtual void SetLookVector(Vector2 look)
+    public void SetLookVector(Vector2 look)
     {
-        _look = look;
+        _inputLookVector = look;
     }
 
-    public virtual void SwitchView(Mode mode)
+    public void SwitchView(Mode mode)
     {
         _stateMachine.Switch(mode);
     }
 
-    //////////////////////////////////////////////////////////////////
-    /// ViewMode States
-
-    protected virtual void EnterViewMode_Eyes()
+    protected void _EnterViewMode_Eyes()
     {
     }
-    protected virtual void UpdateViewMode_Eyes()
+
+    protected void _UpdateViewMode_Eyes()
     {
         if (_camera is null || _eyesData.eyes is null)
             return;
@@ -93,21 +88,23 @@ class CharacterView : CharacterBehaviour
         _camera.transform.position = _eyesData.eyes.transform.position;
         _camera.transform.rotation = _eyesData.eyes.transform.rotation;
     }
-    protected virtual void ExitViewMode_Eyes()
+    
+    protected void _ExitViewMode_Eyes()
     {
     }
 
-    protected virtual void EnterViewMode_FirstPerson()
+    protected void _EnterViewMode_FirstPerson()
     {
     }
-    protected virtual void UpdateViewMode_FirstPerson()
+
+    protected void _UpdateViewMode_FirstPerson()
     {
         if (_camera is null)
         {
             return;
         }
 
-        _lookVector += new Vector3(_look.x, _look.y, 0f);
+        _lookVector += new Vector3(_inputLookVector.x, _inputLookVector.y, 0f);
         _lookVector.x = _lookVector.x < -180 || _lookVector.x > 180 ? -_lookVector.x : _lookVector.x;
         _lookVector.y = _lookVector.y < -180 || _lookVector.y > 180 ? -_lookVector.y : _lookVector.y;
         _lookVector.z = _lookVector.z < -180 || _lookVector.z > 180 ? -_lookVector.z : _lookVector.z;
@@ -130,14 +127,16 @@ class CharacterView : CharacterBehaviour
         _camera.transform.position = camPos;
         _camera.transform.rotation = camRot;
     }
-    protected virtual void ExitViewMode_FirstPerson()
+
+    protected void _ExitViewMode_FirstPerson()
     {
     }
 
-    protected virtual void EnterViewMode_ThirdPerson()
+    protected void _EnterViewMode_ThirdPerson()
     {
     }
-    protected virtual void UpdateViewMode_ThirdPerson()
+
+    protected void _UpdateViewMode_ThirdPerson()
     {
         // var data = _thirdPersonData;
         // if (_camera is null || data.lookAtSource is null)
@@ -174,21 +173,16 @@ class CharacterView : CharacterBehaviour
         //     _camera.transform.rotation = camRot;
         // }
     }
-    protected virtual void ExitViewMode_ThirdPerson()
+
+    protected void _ExitViewMode_ThirdPerson()
     {
     }
 
-    protected CharacterMovement _charMovement;
-
-    [SerializeField] protected Camera _camera;
     public new Camera camera
     {
         get => _camera;
         set => _camera = value;
     }
-
-    [SerializeField, ReadOnly] protected Vector3 _lookVector;
-    public Vector2 lookVector => _lookVector;
 
     public Mode mode
     {
@@ -196,13 +190,27 @@ class CharacterView : CharacterBehaviour
         set => _stateMachine.Switch(value);
     }
 
+    public float turnAngle => _lookVector.x;
+    public Vector2 lookVector => _lookVector;
+
+    protected CharacterMovement _charMovement;
+
+    [SerializeField]
+    protected Camera _camera;
+
+    [SerializeField, ReadOnly]
+    protected Vector3 _lookVector;
+
     [Header("View Modes Data"), Space]
-    [SerializeField] protected EyesData _eyesData;
-    [SerializeField] protected FirstPersonData _firstPersonData;
-    [SerializeField] protected ThirdPersonData _thirdPersonData;
+    [SerializeField]
+    protected EyesData _eyesData;
+
+    [SerializeField]
+    protected FirstPersonData _firstPersonData;
+
+    [SerializeField]
+    protected ThirdPersonData _thirdPersonData;
 
     protected StateMachine<Mode> _stateMachine;
-
-    protected Vector2 _look;
-    public float turnAngle => _lookVector.x;
+    protected Vector2 _inputLookVector;
 }

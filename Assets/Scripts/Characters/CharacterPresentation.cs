@@ -10,9 +10,11 @@ class CharacterPresentation : CharacterBehaviour
     {
         base.OnCharacterCreate(character, initializer);
 
-        _charMovement = _character.charMovement;
-        _animator = GetComponent<Animator>();
         _charAsset = initializer.charAsset;
+        _charMovement = _character.charMovement;
+        _charView = _character.charView;
+        _charBody = _character.charBody;
+        _animator = GetComponent<Animator>();
 
         _CreateAnimGraph();
     }
@@ -21,6 +23,7 @@ class CharacterPresentation : CharacterBehaviour
     {
         base.OnCharacterUpdate();
 
+        _UpdateBody();
         _UpdateAnimGraph();
     }
 
@@ -201,8 +204,15 @@ class CharacterPresentation : CharacterBehaviour
         }
     }
 
+    protected void _UpdateBody()
+    {
+        _charBody.body.rotation = Quaternion.Euler(0, _charView.lookVector.x, 0);
+    }
+
     protected CharacterAsset _charAsset;
     protected CharacterMovement _charMovement;
+    protected CharacterView _charView;
+    protected CharacterBody _charBody;
 
     protected Animator _animator;
     protected AnimationPlayableOutput _animOutput;
