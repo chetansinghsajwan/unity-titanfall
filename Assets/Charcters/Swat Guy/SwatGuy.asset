@@ -41,7 +41,7 @@ MonoBehaviour:
   groundStandCapsuleCenter: {x: 0, y: 1, z: 0}
   groundStandCapsuleHeight: 2
   groundStandCapsuleRadius: 0.5
-  groundStandToCrouchTransitionSpeed: 5
+  groundStandToCrouchResizeSpeed: 0
   groundStandMaintainVelocityOnSurface: 0
   groundStandMaintainVelocityAlongSurface: 0
   groundCrouchIdleSpeed: 0
@@ -59,10 +59,10 @@ MonoBehaviour:
   groundCrouchCapsuleCenter: {x: 0, y: 1, z: 0}
   groundCrouchCapsuleHeight: 1
   groundCrouchCapsuleRadius: 0.5
-  groundCrouchToStandTransitionSpeed: 8
+  groundCrouchToStandResizeSpeed: 0
   groundCrouchMaintainVelocityOnSurface: 0
   groundCrouchMaintainVelocityAlongSurface: 0
-  airGravityAcceleration: 9.8
+  airGravityAcceleration: -9.8
   airGravityMaxSpeed: Infinity
   airMinMoveDistance: 0
   airMoveSpeed: 0
