@@ -5,4 +5,5 @@ using UnityEngine;
 /// For example, hand-grip or eye-position
 class CharacterBody : CharacterBehaviour
 {
+    public Transform body;
 }

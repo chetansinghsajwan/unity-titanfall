@@ -17,7 +17,7 @@ class TrainingLevel : BasicLevelAsset
         return levelOp;
     }
 
-    private async void _PerformLoad(AsyncOperationSource op)
+    private void _PerformLoad(AsyncOperationSource op)
     {
         IGameLogger logger = GameLog.System.CreateLogger("TrainingLevel");
 
