@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using GameFramework.LevelManagement;
 using GameFramework;
 
@@ -9,26 +8,18 @@ class EditorLevelInitializer : MonoBehaviour
 
     private void Awake()
     {
-        if (isInitDone) return;
-        isInitDone = true;
+        if (isInitDone)
+            return;
 
-        Debug.Log("Initializing Addressables...");
-        Addressables.InitializeAsync(autoReleaseHandle: true)
-            .WaitForCompletion();
+        isInitDone = true;
 
         Debug.Log("Initializing PlayerManagerSystem...");
         PlayerManager.System = new PlayerManagerSystem();
 
-        Debug.Log($"Loading level asset{_level.SubObjectName}...");
-        LevelAsset level = _level.LoadAssetAsync()
-            .WaitForCompletion();
-
-        Debug.Log($"Loading level{level.name}...");
-        level.PerformLoad();
-
-        // UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(this.gameObject.scene);
+        Debug.Log($"Loading level{_level.name}...");
+        _level.PerformLoad();
     }
 
     [SerializeField]
-    AssetReferenceLevel _level;
+    private LevelAsset _level;
 }

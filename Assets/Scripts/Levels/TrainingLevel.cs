@@ -1,6 +1,5 @@
 using System.Linq;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using GameFramework.Logging;
 using GameFramework.LevelManagement;
 using GameFramework;
@@ -38,16 +37,6 @@ class TrainingLevel : BasicLevelAsset
             return;
         }
 
-        string charName = "SwatGuy";
-        CharacterAsset charAsset = await Addressables.LoadAssetAsync<CharacterAsset>(
-            $"Characters/{charName}").Task;
-
-        if (charAsset is null)
-        {
-            Debug.LogError($"Could not load character asset, {charName}", this);
-            throw new UnityException();
-        }
-
         var charFactory = charAsset.factory;
         charFactory.SetMaxReserve(5);
         charFactory.Reserve(4);
@@ -59,4 +48,6 @@ class TrainingLevel : BasicLevelAsset
 
         op.SetCompleted();
     }
+
+    public CharacterAsset charAsset;
 }

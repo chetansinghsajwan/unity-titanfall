@@ -15,3 +15,4 @@ MonoBehaviour:
   _scenes:
   - _scenePath: Scenes/Playground/Playground
     _sceneAsset: {fileID: 102900000, guid: 707acc8dffb72b144bb1ffbe1c965f3d, type: 3}
+  charAsset: {fileID: 11400000, guid: dab369d3de5b62a4da379f1d2e86bc3a, type: 2}
