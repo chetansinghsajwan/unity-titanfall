@@ -3,29 +3,6 @@ using UnityEngine;
 
 class PlayerInputs : PlayerBehaviour
 {
-    protected Character _character = null;
-    protected CharacterMovement _charMovement = null;
-    protected CharacterInteraction _charInteration = null;
-    protected PlayerInteraction _playerInteraction;
-
-    protected Vector2 _move = Vector2.zero;
-    protected Vector2 _look = Vector2.zero;
-    protected bool _walk = false;
-    protected bool _sprint = false;
-    protected bool _crouch = false;
-    protected bool _prone = false;
-    protected bool _jump = false;
-    protected bool _weapon1;
-    protected bool _weapon2;
-    protected bool _weapon3;
-    protected bool _grenade1;
-    protected bool _grenade2;
-    protected bool _reload;
-    protected bool _leftFire;
-    protected bool _rightFire;
-    protected bool _sight;
-    protected bool _interact;
-
     public override void OnPlayerPossess(Character character)
     {
         if (character is null)
@@ -85,10 +62,10 @@ class PlayerInputs : PlayerBehaviour
 
     protected Vector2 _GetLookVector()
     {
-        Vector2 look = Vector2.zero;
-        look.x = Input.GetAxis("look x");
-        look.y = Input.GetAxis("look y");
-        return look;
+        Vector2 mousePosition = new Vector2(-Input.mousePosition.x, Input.mousePosition.y);
+        Vector2 deltaMove = _lastMousePosition - mousePosition;
+        _lastMousePosition = mousePosition;
+        return deltaMove;
     }
 
     protected void _HandleCharacterMovement()
@@ -172,4 +149,28 @@ class PlayerInputs : PlayerBehaviour
             if (_reload) interactionModule.StartReload();
         }
     }
+
+    protected Character _character = null;
+    protected CharacterMovement _charMovement = null;
+    protected CharacterInteraction _charInteration = null;
+    protected PlayerInteraction _playerInteraction;
+
+    protected Vector2 _move = Vector2.zero;
+    protected Vector2 _look = Vector2.zero;
+    protected Vector2 _lastMousePosition = Vector2.zero;
+    protected bool _walk = false;
+    protected bool _sprint = false;
+    protected bool _crouch = false;
+    protected bool _prone = false;
+    protected bool _jump = false;
+    protected bool _weapon1;
+    protected bool _weapon2;
+    protected bool _weapon3;
+    protected bool _grenade1;
+    protected bool _grenade2;
+    protected bool _reload;
+    protected bool _leftFire;
+    protected bool _rightFire;
+    protected bool _sight;
+    protected bool _interact;
 }
