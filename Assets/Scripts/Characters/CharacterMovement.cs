@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(CapsuleCollider))]
@@ -98,8 +98,11 @@ class CharacterMovement : CharacterBehaviour
             }
         }
 
+        if (_activeModule is not null)
+        {
         _activeModule.RunPhysics(out _capsule);
         _capsule.WriteValuesTo(_collider);
+        }
     }
 
     protected virtual void PostUpdateModules()
@@ -110,26 +113,23 @@ class CharacterMovement : CharacterBehaviour
         }
     }
 
-    protected CharacterMovementModule[] _modules;
     public IReadOnlyCollection<CharacterMovementModule> modules => _modules;
-
-    protected CharacterMovementModule _activeModule;
-    protected CharacterMovementModule _previousModule;
     public CharacterMovementModule activeModule => _activeModule;
     public CharacterMovementModule previousModule => _previousModule;
-
-    protected CapsuleCollider _collider;
     public new CapsuleCollider collider => _collider;
-
-    protected float _skinWidth;
     public float skinWidth => _skinWidth;
-    
-    protected VirtualCapsule _capsule;
     public VirtualCapsule capsule => _capsule;
-
-    protected Vector3 _velocity;
-    protected Vector3 _lastPosition;
     public Vector3 velocity => _velocity;
 
+    protected CharacterMovementModule[] _modules;
+    
+    [SerializeReference]
+    protected CharacterMovementModule _activeModule;
+    protected CharacterMovementModule _previousModule;
+    protected CapsuleCollider _collider;
+    protected float _skinWidth;
+    protected VirtualCapsule _capsule;
+    protected Vector3 _velocity;
+    protected Vector3 _lastPosition;
     protected float _deltaTime = 0f;
 }

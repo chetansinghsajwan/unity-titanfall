@@ -2,10 +2,11 @@
 using System.Diagnostics.Contracts;
 using GameFramework.Extensions;
 using UnityEngine;
-using UnityEngine.Playables;
 
+[Serializable]
 class CharacterMovementGroundModule : CharacterMovementModule
 {
+    [Serializable]
     protected struct GroundResult
     {
         public static readonly GroundResult Invalid = new GroundResult();
@@ -28,7 +29,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         }
     }
 
-    protected enum MovementState : byte
+    public enum MovementState : byte
     {
         StandIdle,
         StandWalk,
@@ -65,9 +66,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _standSprintRightAngleMax = charAsset.groundStandSprintRightAngleMax;
         _standJumpForce = charAsset.groundStandJumpForce;
         _standStepUpPercent = charAsset.groundStandStepUpPercent;
-        _standStepUpHeight = _charCapsule.capsule.height * _standStepUpPercent / 100f;
+        _standStepUpHeight = charAsset.groundStandCapsuleHeight * _standStepUpPercent / 100f;
         _standStepDownPercent = charAsset.groundStandStepDownPercent;
-        _standStepDownHeight = _charCapsule.capsule.height * _standStepDownPercent / 100f;
+        _standStepDownDepth = charAsset.groundStandCapsuleHeight * _standStepDownPercent / 100f;
         _standSlopeUpAngle = Math.Clamp(charAsset.groundStandSlopeUpAngle, _MIN_SLOPE_ANGLE, _MAX_SLOPE_ANGLE);
         _standSlopeDownAngle = charAsset.groundStandSlopeDownAngle;
         _standMaintainVelocityOnSurface = charAsset.groundStandMaintainVelocityOnSurface;
@@ -84,9 +85,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _crouchRunAcceleration = charAsset.groundCrouchRunAcceleration;
         _crouchJumpForce = charAsset.groundCrouchJumpForce;
         _crouchStepUpPercent = charAsset.groundCrouchStepUpPercent;
-        _crouchStepUpHeight = _charCapsule.capsule.height * _crouchStepUpPercent / 100f;
+        _crouchStepUpHeight = charAsset.groundCrouchCapsuleHeight * _crouchStepUpPercent / 100f;
         _crouchStepDownPercent = charAsset.groundCrouchStepDownPercent;
-        _crouchStepUpHeight = _charCapsule.capsule.height * _crouchStepUpPercent / 100f;
+        _crouchStepDownDepth = charAsset.groundCrouchCapsuleHeight * _crouchStepDownPercent / 100f;
         _crouchSlopeUpAngle = Math.Clamp(charAsset.groundCrouchSlopeUpAngle, _MIN_SLOPE_ANGLE, _MAX_SLOPE_ANGLE);
         _crouchSlopeDownAngle = charAsset.groundCrouchSlopeDownAngle;
         _crouchMaintainVelocityOnSurface = charAsset.groundCrouchMaintainVelocityOnSurface;
@@ -95,79 +96,6 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _crouchCapsuleHeight = charAsset.groundCrouchCapsuleHeight;
         _crouchCapsuleRadius = charAsset.groundCrouchCapsuleRadius;
         _crouchToStandResizeSpeed = charAsset.groundCrouchToStandResizeSpeed;
-    }
-
-    //// -------------------------------------------------------------------------------------------
-    //// CharacterBehaviour events
-    //// -------------------------------------------------------------------------------------------
-
-    public override void OnLoaded(CharacterMovement charMovement)
-    {
-        base.OnLoaded(charMovement);
-
-        _charView = _character.charView;
-    }
-
-    public override void OnUnloaded()
-    {
-        base.OnUnloaded();
-
-        _charView = null;
-    }
-
-    public override bool ShouldRun()
-    {
-        _charUp = _character.up;
-        _charRight = _character.right;
-        _charForward = _character.forward;
-        _velocity = _charMovement.velocity;
-        _charCapsule.capsule = _charMovement.capsule;
-        _charCapsule.skinWidth = _charMovement.skinWidth;
-        _charCapsule.collider = _charMovement.collider;
-        _deltaTime = Time.deltaTime;
-
-        _UpdateGroundResult();
-
-        _baseDeltaPosition = Vector3.zero;
-        _baseDeltaRotation = Vector3.zero;
-
-        if (_groundResult.isValid)
-        {
-            _baseDeltaPosition = _groundResult.collider.transform.position - _groundResult.basePosition;
-            _baseDeltaRotation = _groundResult.collider.transform.rotation.eulerAngles - _groundResult.baseRotation.eulerAngles;
-        }
-
-        if (_baseDeltaPosition != Vector3.zero || _baseDeltaRotation != Vector3.zero)
-        {
-            return true;
-        }
-
-        return _groundResult.isValid;
-    }
-
-    public override void RunPhysics(out VirtualCapsule result)
-    {
-        _RecoverFromBaseMove();
-
-        Vector3 moveInput = new Vector3(_moveVector.x, 0, _moveVector.y);
-        moveInput = Quaternion.Euler(0, _charView.turnAngle, 0) * moveInput.normalized;
-        moveInput = _character.rotation * moveInput;
-
-        _velocity = Vector3.ProjectOnPlane(_velocity, _charUp);
-
-        Vector3 move = moveInput * _moveSpeed * _deltaTime;
-        move = Vector3.MoveTowards(_velocity * _deltaTime, move, _moveAccel * _deltaTime);
-
-        if (_doJump)
-        {
-            _doJump = false;
-            move += _charUp * _jumpPower * _deltaTime;
-        }
-
-        _GroundMove(move);
-        _lastMovementState = _movementState;
-
-        result = _charCapsule.capsule;
     }
 
     //// -------------------------------------------------------------------------------------------
@@ -182,7 +110,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
     public void SwitchToStandIdle()
     {
         _movementState = MovementState.StandIdle;
-        _stepDownDepth = _standStepDownHeight;
+        _stepDownDepth = _standStepDownDepth;
         _stepUpHeight = _standStepUpHeight;
         _maxSlopeUpAngle = _standSlopeUpAngle;
         _slopeDownAngle = _standSlopeDownAngle;
@@ -196,7 +124,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
     public void SwitchToStandWalk()
     {
         _movementState = MovementState.StandWalk;
-        _stepDownDepth = _standStepDownHeight;
+        _stepDownDepth = _standStepDownDepth;
         _stepUpHeight = _standStepUpHeight;
         _maxSlopeUpAngle = _standSlopeUpAngle;
         _slopeDownAngle = _standSlopeDownAngle;
@@ -210,7 +138,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
     public void SwitchToStandRun()
     {
         _movementState = MovementState.StandRun;
-        _stepDownDepth = _standStepDownHeight;
+        _stepDownDepth = _standStepDownDepth;
         _stepUpHeight = _standStepUpHeight;
         _maxSlopeUpAngle = _standSlopeUpAngle;
         _slopeDownAngle = _standSlopeDownAngle;
@@ -224,7 +152,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
     public void SwitchToStandSprint()
     {
         _movementState = MovementState.StandSprint;
-        _stepDownDepth = _standStepDownHeight;
+        _stepDownDepth = _standStepDownDepth;
         _stepUpHeight = _standStepUpHeight;
         _maxSlopeUpAngle = _standSlopeUpAngle;
         _slopeDownAngle = _standSlopeDownAngle;
@@ -297,20 +225,91 @@ class CharacterMovementGroundModule : CharacterMovementModule
     }
 
     //// -------------------------------------------------------------------------------------------
-    //// Movement implementation
+    //// CharacterBehaviour events
     //// -------------------------------------------------------------------------------------------
 
-    protected void _GroundMove(Vector3 originalMove)
+    public override void OnLoaded(CharacterMovement charMovement)
     {
-        _UpdateCapsuleSize();
+        base.OnLoaded(charMovement);
 
+        _charView = _character.charView;
+    }
+
+    public override void OnUnloaded()
+    {
+        base.OnUnloaded();
+
+        _charView = null;
+    }
+
+    public override bool ShouldRun()
+    {
+        _charUp = _character.up;
+        _charRight = _character.right;
+        _charForward = _character.forward;
+        _velocity = _charMovement.velocity;
+        _charCapsule.capsule = _charMovement.capsule;
+        _charCapsule.skinWidth = _charMovement.skinWidth;
+        _charCapsule.collider = _charMovement.collider;
+        _deltaTime = Time.deltaTime;
+
+        _UpdateGroundResult();
+
+        _baseDeltaPosition = Vector3.zero;
+        _baseDeltaRotation = Vector3.zero;
+
+        if (_groundResult.isValid)
+        {
+            _baseDeltaPosition = _groundResult.collider.transform.position - _groundResult.basePosition;
+            _baseDeltaRotation = _groundResult.collider.transform.rotation.eulerAngles - _groundResult.baseRotation.eulerAngles;
+        }
+
+        if (_baseDeltaPosition != Vector3.zero || _baseDeltaRotation != Vector3.zero)
+        {
+            return true;
+        }
+
+        return _groundResult.isValid;
+    }
+
+    public override void RunPhysics(out VirtualCapsule result)
+    {
+        _RecoverFromBaseMove();
+
+        Vector3 moveInput = new Vector3(_moveVector.x, 0, _moveVector.y);
+        moveInput = Quaternion.Euler(0, _charView.turnAngle, 0) * moveInput.normalized;
+        moveInput = _character.rotation * moveInput;
+
+        _velocity = Vector3.ProjectOnPlane(_velocity, _charUp);
+
+        Vector3 move = moveInput * _moveSpeed * _deltaTime;
+        move = Vector3.MoveTowards(_velocity * _deltaTime, move, _moveAccel * _deltaTime);
+
+        if (_doJump)
+        {
+            _doJump = false;
+            move += _charUp * _jumpPower * _deltaTime;
+        }
+
+        _UpdateCapsuleSize();
+        _PerformMove(move);
+        _lastMovementState = _movementState;
+
+        result = _charCapsule.capsule;
+    }
+
+    //// -------------------------------------------------------------------------------------------
+    //// Physics
+    //// -------------------------------------------------------------------------------------------
+
+    protected void _PerformMove(Vector3 originalMove)
+    {
         Vector3 moveH = Vector3.ProjectOnPlane(originalMove, _charUp);
         Vector3 moveV = originalMove - moveH;
         Vector3 remainingMove = moveH;
-        float moveVMag = moveV.magnitude;
 
         // perform the vertical move (usually jump)
-        if (moveVMag > 0f)
+        if (moveV != Vector3.zero)
         {
             _charCapsule.CapsuleMove(moveV);
         }
@@ -318,7 +317,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         if (remainingMove.magnitude > _minMoveDistance)
         {
             var stepUpHeight = 0f;
-            var canStepUp = moveVMag == 0f;
+            var canStepUp = moveV.magnitude == 0f;
             var didStepUp = false;
             var didStepUpRecover = false;
             var positionBeforeStepUp = Vector3.zero;
@@ -364,7 +363,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
                 }
 
                 // try sliding on the obstacle
-                if (_SlideOnSurface(originalMove, ref remainingMove, moveHit, moveHitNormal))
+                if (_TrySlideOnSurface(originalMove, ref remainingMove, moveHit, moveHitNormal))
                 {
                     continue;
                 }
@@ -428,13 +427,16 @@ class CharacterMovementGroundModule : CharacterMovementModule
         // _movementStateWeight = weight;
     }
 
-    protected bool _SlideOnSurface(Vector3 originalMove, ref Vector3 remainingMove, RaycastHit hit, Vector3 hitNormal)
+    protected bool _TrySlideOnSurface(Vector3 originalMove, ref Vector3 remainingMove, RaycastHit hit, Vector3 hitNormal)
     {
         if (remainingMove == Vector3.zero)
             return false;
 
-        if (_CanStandOn(hit, hitNormal, out float slopeAngle))
+        if (_CanStandOn(hit, hitNormal, out float slopeAngle) is false)
         {
+            return false;
+        }
+
             if (slopeAngle == 0f)
             {
                 return false;
@@ -453,9 +455,6 @@ class CharacterMovementGroundModule : CharacterMovementModule
 
             remainingMove = slopeMove;
             return true;
-        }
-
-        return false;
     }
 
     protected bool _SlideAlongSurface(Vector3 originalMove, ref Vector3 remainingMove, RaycastHit hit, Vector3 hitNormal)
@@ -504,7 +503,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
 
     protected bool _CheckIsGround(Collider collider)
     {
-        if (collider is null)
+        if (collider == null)
         {
             return false;
         }
@@ -537,12 +536,12 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _charCapsule.RecalculateNormalIfZero(hit, ref slopeNormal);
 
         slopeAngle = Vector3.Angle(_charUp, slopeNormal);
-        if (slopeAngle >= _MIN_SLOPE_ANGLE && slopeAngle <= _maxSlopeUpAngle)
+        if (slopeAngle < _MIN_SLOPE_ANGLE || slopeAngle > _maxSlopeUpAngle)
         {
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     protected bool _CastForGround(float depth, out GroundResult result)
@@ -555,7 +554,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
 
         result = new GroundResult();
 
-        if (!_CanStandOn(hit, hitNormal, out float slopeAngle))
+        if (_CanStandOn(hit, hit.normal, out float slopeAngle) is false)
         {
             if (slopeAngle < 90f)
             {
@@ -580,7 +579,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
     }
 
     //// -------------------------------------------------------------------------------------------
-    //// Properties and Fields
+    //// Fields
     //// -------------------------------------------------------------------------------------------
 
     protected const uint _MAX_MOVE_ITERATIONS = 10;
@@ -638,7 +637,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
     protected readonly float _standStepUpPercent;
     protected readonly float _standStepDownPercent;
     protected readonly float _standStepUpHeight;
-    protected readonly float _standStepDownHeight;
+    protected readonly float _standStepDownDepth;
     protected readonly float _standSlopeUpAngle;
     protected readonly float _standSlopeDownAngle;
     protected readonly float _standCapsuleHeight;

@@ -95,7 +95,7 @@ class PlayerInputs : PlayerBehaviour
         else
         {
             if (_walk) module.SwitchToStandWalk();
-            if (_sprint) module.SwitchToStandSprint();
+            else if (_sprint) module.SwitchToStandSprint();
             else module.SwitchToStandRun();
 
             if (_jump) module.Jump();
