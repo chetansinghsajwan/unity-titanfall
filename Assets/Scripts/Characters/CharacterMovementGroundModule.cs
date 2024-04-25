@@ -360,22 +360,21 @@ class CharacterMovementGroundModule : CharacterMovementModule
                     }
                 }
 
-                // if there is no collision (no obstacle or remainingMove == 0)
-                // break the loop
-                if (moveHit.collider is null)
+                // if there is no collision (no obstacle or remainingMove == 0) break the loop
+                if (moveHit.collider == null)
                 {
                     break;
                 }
 
                 // try sliding on the obstacle
-                if (_CaclualteMoveOnSlope(remainingMove, out Vector3 slopeMove, moveHit, moveHitNormal))
+                if (_CalculateMoveOnSlope(remainingMove, out Vector3 slopeMove, moveHit, moveHitNormal))
                 {
                     remainingMove = slopeMove;
                     continue;
                 }
 
                 // step up the first time, we hit an obstacle
-                if (canStepUp && didStepUp == false)
+                if (canStepUp && !didStepUp)
                 {
                     canStepUp = false;
                     didStepUp = true;
@@ -389,8 +388,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
                 }
 
                 // try sliding along the obstacle
-                if (_SlideAlongSurface(move, ref remainingMove, moveHit, moveHitNormal))
+                if (_CaclculateMoveAlongWall(remainingMove, move, out Vector3 slideMove, moveHit, moveHitNormal))
                 {
+                    remainingMove = slideMove;
                     continue;
                 }
 
@@ -433,7 +433,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         // _movementStateWeight = weight;
     }
 
-    protected bool _CaclualteMoveOnSlope(Vector3 move, out Vector3 slopeMove, RaycastHit hit, Vector3 hitNormal)
+    protected bool _CalculateMoveOnSlope(Vector3 move, out Vector3 slopeMove, RaycastHit hit, Vector3 hitNormal)
     {
         if (move == Vector3.zero)
         {
@@ -441,7 +441,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
             return false;
         }
 
-        if (_CanStandOn(hit, hitNormal, out float slopeAngle) is false)
+        if (!_CanStandOn(hit, hitNormal, out float slopeAngle))
         {
             slopeMove = Vector3.zero;
             return false;
@@ -462,28 +462,30 @@ class CharacterMovementGroundModule : CharacterMovementModule
         return true;
     }
 
-    protected bool _SlideAlongSurface(Vector3 move, ref Vector3 remainingMove, RaycastHit hit, Vector3 hitNormal)
+    protected bool _CaclculateMoveAlongWall(Vector3 move, Vector3 originalMove, out Vector3 slideMove, RaycastHit hit, Vector3 hitNormal)
     {
-        float remainingMoveSize = remainingMove.magnitude;
+        float moveMag = move.magnitude;
 
-        if (hit.collider is null || remainingMoveSize == 0f)
+        if (hit.collider == null || moveMag == 0f)
+        {
+            slideMove = Vector3.zero;
             return false;
+        }
 
         _RecalculateNormalIfZero(hit, ref hitNormal);
 
         Vector3 hitProject = Vector3.ProjectOnPlane(hitNormal, _charUp);
-        Vector3 slideMove = Vector3.ProjectOnPlane(move.normalized * remainingMoveSize, hitProject);
+        slideMove = Vector3.ProjectOnPlane(originalMove.normalized * moveMag, hitProject);
         if (_maintainVelocityAlongSurface)
         {
             // to avoid sliding along perpendicular surface for very small values,
             // may be a result of small miscalculations
             if (slideMove.magnitude > _MIN_MOVE_ALONG_SURFACE_TO_MAINTAIN_VELOCITY)
             {
-                slideMove = slideMove.normalized * remainingMoveSize;
+                slideMove = slideMove.normalized * moveMag;
             }
         }
 
-        remainingMove = slideMove;
         return true;
     }
 
