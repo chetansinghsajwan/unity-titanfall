@@ -323,7 +323,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
             var positionBeforeStepUp = Vector3.zero;
             var moveBeforeStepUp = Vector3.zero;
 
-            _charCapsule.CapsuleResolvePenetration();
+            _CapsuleResolvePenetration();
 
             for (uint it = 0; it < _MAX_MOVE_ITERATIONS; it++)
             {
@@ -395,7 +395,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         }
 
         _StepDown(originalMove);
-        _charCapsule.CapsuleResolvePenetration();
+        _CapsuleResolvePenetration();
     }
 
     protected void _RecoverFromBaseMove()
@@ -464,7 +464,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         if (hit.collider is null || remainingMoveSize == 0f)
             return false;
 
-        _charCapsule.RecalculateNormalIfZero(hit, ref hitNormal);
+        _RecalculateNormalIfZero(hit, ref hitNormal);
 
         Vector3 hitProject = Vector3.ProjectOnPlane(hitNormal, _charUp);
         Vector3 slideMove = Vector3.ProjectOnPlane(originalMove.normalized * remainingMoveSize, hitProject);
@@ -488,7 +488,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         if (verticalMove != 0f || _stepDownDepth <= 0)
             return false;
 
-        _charCapsule.CapsuleResolvePenetration();
+        _CapsuleResolvePenetration();
 
         var moved = _charCapsule.CapsuleMove(_character.down * _stepDownDepth, out RaycastHit hit, out Vector3 hitNormal);
 
@@ -533,7 +533,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
             return false;
         }
 
-        _charCapsule.RecalculateNormalIfZero(hit, ref slopeNormal);
+        _RecalculateNormalIfZero(hit, ref slopeNormal);
 
         slopeAngle = Vector3.Angle(_charUp, slopeNormal);
         if (slopeAngle < _MIN_SLOPE_ANGLE || slopeAngle > _maxSlopeUpAngle)
@@ -576,6 +576,16 @@ class CharacterMovementGroundModule : CharacterMovementModule
     {
         _prevGroundResult = _groundResult;
         _CastForGround(_groundCheckDepth, out _groundResult);
+    }
+
+    protected void _CapsuleResolvePenetration()
+    {
+        _charCapsule.CapsuleResolvePenetration();
+    }
+
+    protected void _RecalculateNormalIfZero(RaycastHit hit, ref Vector3 normal)
+    {
+        _charCapsule.RecalculateNormalIfZero(hit, ref normal);
     }
 
     //// -------------------------------------------------------------------------------------------
