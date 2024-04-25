@@ -317,7 +317,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         if (remainingMove.magnitude > _minMoveDistance)
         {
             var stepUpHeight = 0f;
-            var canStepUp = moveV.magnitude == 0f;
+            var canStepUp = moveV == Vector3.zero;
             var didStepUp = false;
             var didStepUpRecover = false;
             var positionBeforeStepUp = Vector3.zero;
@@ -363,8 +363,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
                 }
 
                 // try sliding on the obstacle
-                if (_TrySlideOnSurface(originalMove, ref remainingMove, moveHit, moveHitNormal))
+                if (_CaclualteMoveOnSlope(remainingMove, out Vector3 slopeMove, moveHit, moveHitNormal))
                 {
+                    remainingMove = slopeMove;
                     continue;
                 }
 
@@ -427,34 +428,33 @@ class CharacterMovementGroundModule : CharacterMovementModule
         // _movementStateWeight = weight;
     }
 
-    protected bool _TrySlideOnSurface(Vector3 originalMove, ref Vector3 remainingMove, RaycastHit hit, Vector3 hitNormal)
+    protected bool _CaclualteMoveOnSlope(Vector3 move, out Vector3 slopeMove, RaycastHit hit, Vector3 hitNormal)
     {
-        if (remainingMove == Vector3.zero)
-            return false;
-
-        if (_CanStandOn(hit, hitNormal, out float slopeAngle) is false)
+        if (move == Vector3.zero)
         {
+            slopeMove = Vector3.zero;
             return false;
         }
 
-            if (slopeAngle == 0f)
-            {
-                return false;
-            }
+        if (_CanStandOn(hit, hitNormal, out float slopeAngle) is false)
+        {
+            slopeMove = Vector3.zero;
+            return false;
+        }
 
-            Plane plane = new Plane(hitNormal, hit.point);
-            Ray ray = new Ray(hit.point + remainingMove, _charUp);
-            plane.Raycast(ray, out float enter);
+        if (slopeAngle == 0f)
+        {
+            slopeMove = Vector3.zero;
+            return false;
+        }
 
-            Vector3 slopeMove = remainingMove + (_charUp * enter);
+        slopeMove = Vector3.ProjectOnPlane(move, hitNormal);
+        if (_maintainVelocityOnSurface == false)
+        {
+            slopeMove = slopeMove.normalized * move.magnitude;
+        }
 
-            if (_maintainVelocityOnSurface == false)
-            {
-                slopeMove = slopeMove.normalized * remainingMove.magnitude;
-            }
-
-            remainingMove = slopeMove;
-            return true;
+        return true;
     }
 
     protected bool _SlideAlongSurface(Vector3 originalMove, ref Vector3 remainingMove, RaycastHit hit, Vector3 hitNormal)
