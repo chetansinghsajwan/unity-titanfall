@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.Contracts;
 using GameFramework.Extensions;
 using UnityEngine;
@@ -302,10 +302,10 @@ class CharacterMovementGroundModule : CharacterMovementModule
     //// Physics
     //// -------------------------------------------------------------------------------------------
 
-    protected void _PerformMove(Vector3 originalMove)
+    protected void _PerformMove(Vector3 move)
     {
-        Vector3 moveH = Vector3.ProjectOnPlane(originalMove, _charUp);
-        Vector3 moveV = originalMove - moveH;
+        Vector3 moveH = Vector3.ProjectOnPlane(move, _charUp);
+        Vector3 moveV = move - moveH;
         Vector3 remainingMove = moveH;
 
         // perform the vertical move (usually jump)
@@ -328,6 +328,11 @@ class CharacterMovementGroundModule : CharacterMovementModule
             for (uint it = 0; it < _MAX_MOVE_ITERATIONS; it++)
             {
                 remainingMove -= _charCapsule.CapsuleMove(remainingMove, out RaycastHit moveHit, out Vector3 moveHitNormal);
+
+                if (moveHitNormal == Vector3.zero)
+                {
+                    moveHitNormal = moveHit.normal;
+                }
 
                 // perform step up recover
                 if (didStepUp && !didStepUpRecover)
@@ -384,7 +389,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
                 }
 
                 // try sliding along the obstacle
-                if (_SlideAlongSurface(originalMove, ref remainingMove, moveHit, moveHitNormal))
+                if (_SlideAlongSurface(move, ref remainingMove, moveHit, moveHitNormal))
                 {
                     continue;
                 }
@@ -394,7 +399,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
             }
         }
 
-        _StepDown(originalMove);
+        _StepDown(move);
         _CapsuleResolvePenetration();
     }
 
@@ -457,7 +462,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         return true;
     }
 
-    protected bool _SlideAlongSurface(Vector3 originalMove, ref Vector3 remainingMove, RaycastHit hit, Vector3 hitNormal)
+    protected bool _SlideAlongSurface(Vector3 move, ref Vector3 remainingMove, RaycastHit hit, Vector3 hitNormal)
     {
         float remainingMoveSize = remainingMove.magnitude;
 
@@ -467,7 +472,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _RecalculateNormalIfZero(hit, ref hitNormal);
 
         Vector3 hitProject = Vector3.ProjectOnPlane(hitNormal, _charUp);
-        Vector3 slideMove = Vector3.ProjectOnPlane(originalMove.normalized * remainingMoveSize, hitProject);
+        Vector3 slideMove = Vector3.ProjectOnPlane(move.normalized * remainingMoveSize, hitProject);
         if (_maintainVelocityAlongSurface)
         {
             // to avoid sliding along perpendicular surface for very small values,
@@ -482,9 +487,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
         return true;
     }
 
-    protected bool _StepDown(Vector3 originalMove)
+    protected bool _StepDown(Vector3 move)
     {
-        var verticalMove = Vector3.Project(originalMove, _charUp).magnitude;
+        var verticalMove = Vector3.Project(move, _charUp).magnitude;
         if (verticalMove != 0f || _stepDownDepth <= 0)
             return false;
 
