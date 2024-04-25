@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.Contracts;
 using GameFramework.Extensions;
 using UnityEngine;
@@ -449,7 +449,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         }
 
         slopeMove = Vector3.ProjectOnPlane(move, hitNormal);
-        if (_maintainVelocityOnSurface == false)
+        if (_maintainVelocityOnSurface)
         {
             slopeMove = slopeMove.normalized * move.magnitude;
         }
