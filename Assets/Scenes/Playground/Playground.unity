@@ -1031,7 +1031,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c5e99368cdd00252ba953f128b9cb4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _level: {fileID: 11400000, guid: 74e44d2eebce64744bddf4c567059e1e, type: 2}
+  charAsset: {fileID: 11400000, guid: dab369d3de5b62a4da379f1d2e86bc3a, type: 2}
+  sceneObject: {fileID: 1772927705}
 --- !u!1 &1642470179 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8595054391902159044, guid: c31418e8fcb0c884abfb76d8b231f016, type: 3}

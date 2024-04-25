@@ -1,25 +1,37 @@
 using UnityEngine;
-using GameFramework.LevelManagement;
-using GameFramework;
+using System.Linq;
 
 class EditorLevelInitializer : MonoBehaviour
 {
-    static bool isInitDone = false;
-
-    private void Awake()
+    public void Start()
     {
-        if (isInitDone)
-            return;
-
-        isInitDone = true;
-
-        Debug.Log("Initializing PlayerManagerSystem...");
         PlayerManager.System = new PlayerManagerSystem();
 
-        Debug.Log($"Loading level{_level.name}...");
-        _level.PerformLoad();
+        Transform spawnPoint = sceneObject.playerSpawnPoints.
+            FirstOrDefault(trans => trans is not null);
+
+        if (spawnPoint == null)
+        {
+            return;
+        }
+
+        var localPlayer = PlayerManager.CreateLocalPlayer();
+        if (localPlayer == null)
+        {
+            Debug.LogError("could not create local player.");
+            return;
+        }
+
+        var charFactory = charAsset.factory;
+        charFactory.SetMaxReserve(5);
+        charFactory.Reserve(4);
+
+        Character character = charFactory.Create(spawnPoint.position, spawnPoint.rotation);
+
+        Debug.Log("created character.");
+        localPlayer.Possess(character);
     }
 
-    [SerializeField]
-    private LevelAsset _level;
+    public CharacterAsset charAsset;
+    public SceneObject sceneObject;
 }
