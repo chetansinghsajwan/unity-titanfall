@@ -1216,8 +1216,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSpawnPoints:
-  - {fileID: 1151477677}
   - {fileID: 1193291082}
+  - {fileID: 1151477677}
   - {fileID: 1165007441}
 --- !u!4 &1772927706
 Transform:
