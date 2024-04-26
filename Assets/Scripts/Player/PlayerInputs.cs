@@ -62,10 +62,13 @@ class PlayerInputs : PlayerBehaviour
 
     protected Vector2 _GetLookVector()
     {
-        Vector2 mousePosition = new Vector2(-Input.mousePosition.x, Input.mousePosition.y);
-        Vector2 deltaMove = _lastMousePosition - mousePosition;
-        _lastMousePosition = mousePosition;
-        return deltaMove;
+        Vector2 delta = Input.mousePositionDelta;
+        delta.y *= _lookInvertX ? -1 : 1;
+        delta.x *= _lookInvertY ? -1 : 1;
+
+        delta.x *= _lookSensitivity.x;
+        delta.y *= _lookSensitivity.y;
+        return delta;
     }
 
     protected void _HandleCharacterMovement()
@@ -155,9 +158,12 @@ class PlayerInputs : PlayerBehaviour
     protected CharacterInteraction _charInteration = null;
     protected PlayerInteraction _playerInteraction;
 
+    public Vector2 _lookSensitivity = Vector2.zero;
+    public bool _lookInvertX = true;
+    public bool _lookInvertY = false;
+
     protected Vector2 _move = Vector2.zero;
     protected Vector2 _look = Vector2.zero;
-    protected Vector2 _lastMousePosition = Vector2.zero;
     protected bool _walk = false;
     protected bool _sprint = false;
     protected bool _crouch = false;
