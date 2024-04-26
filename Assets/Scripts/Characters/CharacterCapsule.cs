@@ -22,8 +22,7 @@ struct CharacterCapsule
     {
         if (skinWidth > 0f)
         {
-            VirtualCapsule outerCapsule = capsule;
-            outerCapsule.radius += skinWidth;
+            VirtualCapsule outerCapsule = GetOuterCapsule();
             outerCapsule.CapsuleCast(move, out outerHit);
 
             if (outerHit.collider)
@@ -70,8 +69,7 @@ struct CharacterCapsule
     {
         if (skinWidth > 0f)
         {
-            VirtualCapsule outerCapsule = capsule;
-            outerCapsule.radius += skinWidth;
+            VirtualCapsule outerCapsule = GetOuterCapsule();
             outerCapsule.BaseSphereCast(move, out outerHit);
 
             if (outerHit.collider)
@@ -167,9 +165,7 @@ struct CharacterCapsule
 
         if (skinWidth > 0f)
         {
-            VirtualCapsule outerCapsule = capsule;
-            outerCapsule.radius += skinWidth;
-
+            VirtualCapsule outerCapsule = GetOuterCapsule();
             resolve = outerCapsule.ResolvePenetration(collider, COLLISION_OFFSET);
         }
         else
@@ -226,6 +222,14 @@ struct CharacterCapsule
         }
 
         return RecalculateNormal(hit, out normal);
+    }
+
+    public VirtualCapsule GetOuterCapsule()
+    {
+        VirtualCapsule outerCapsule = capsule;
+        outerCapsule.radius += skinWidth;
+        outerCapsule.height += skinWidth + skinWidth;
+        return outerCapsule;
     }
 
     public VirtualCapsule capsule;
