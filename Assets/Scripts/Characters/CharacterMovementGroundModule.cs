@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.Contracts;
 using GameFramework.Extensions;
 using UnityEngine;
@@ -468,11 +468,12 @@ class CharacterMovementGroundModule : CharacterMovementModule
             return false;
         }
 
-        slopeMove = Vector3.ProjectOnPlane(move, hitNormal);
-        if (_maintainVelocityOnSurface)
-        {
-            slopeMove = slopeMove.normalized * move.magnitude;
-        }
+        // We don't just project here, because that gives undesired results for horizontal moves.
+        Plane plane = new Plane(hitNormal, hit.point);
+        Ray ray = new Ray(hit.point + move, _charUp);
+        plane.Raycast(ray, out float up);
+        slopeMove = move + (_charUp * up);
+        slopeMove = slopeMove.normalized * move.magnitude;
 
         return true;
     }
@@ -493,7 +494,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
 
         result = new GroundResult();
 
-        if (_CanStandOn(hit, hit.normal, out float slopeAngle) is false)
+        if (_CanStandOn(hit, hitNormal, out float slopeAngle) is false)
         {
             if (slopeAngle < 90f)
             {
