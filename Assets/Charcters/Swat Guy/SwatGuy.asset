@@ -24,13 +24,13 @@ MonoBehaviour:
     m_Bits: 64
   groundMinMoveDistance: 0
   groundStandIdleSpeed: 0
-  groundStandIdleAcceleration: 0.4
+  groundStandIdleAcceleration: 0.6
   groundStandWalkSpeed: 2
-  groundStandWalkAcceleration: 0.3
-  groundStandRunSpeed: 4
-  groundStandRunAcceleration: 0.4
-  groundStandSprintSpeed: 6
-  groundStandSprintAcceleration: 0.3
+  groundStandWalkAcceleration: 0.5
+  groundStandRunSpeed: 8
+  groundStandRunAcceleration: 0.6
+  groundStandSprintSpeed: 8
+  groundStandSprintAcceleration: 0.5
   groundStandSprintLeftAngleMax: -46
   groundStandSprintRightAngleMax: 46
   groundStandJumpForce: 10
@@ -60,8 +60,8 @@ MonoBehaviour:
   groundCrouchCapsuleHeight: 1
   groundCrouchCapsuleRadius: 0.5
   groundCrouchToStandResizeSpeed: 0
-  groundCrouchMaintainVelocityOnSurface: 0
-  groundCrouchMaintainVelocityAlongSurface: 0
+  groundCrouchMaintainVelocityOnSurface: 1
+  groundCrouchMaintainVelocityAlongSurface: 1
   airGravityAcceleration: -9.8
   airGravityMaxSpeed: Infinity
   airMinMoveDistance: 0
