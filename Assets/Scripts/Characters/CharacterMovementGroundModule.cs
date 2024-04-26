@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Diagnostics.Contracts;
 using GameFramework.Extensions;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 [Serializable]
 class CharacterMovementGroundModule : CharacterMovementModule
@@ -306,14 +307,16 @@ class CharacterMovementGroundModule : CharacterMovementModule
     {
         Vector3 moveH = Vector3.ProjectOnPlane(move, _charUp);
         Vector3 moveV = move - moveH;
-        Vector3 remainingMove = moveH;
+        Vector3 moveNormalized = move.normalized;
 
         // perform the vertical move (usually jump)
         if (moveV != Vector3.zero)
         {
-            _charCapsule.CapsuleMove(moveV);
+            _MoveCapsule(moveV, out _);
         }
 
+        // perform the horizontal move
+        Vector3 remainingMove = moveH;
         if (remainingMove.magnitude > _minMoveDistance)
         {
             var stepUpHeight = 0f;
@@ -323,24 +326,25 @@ class CharacterMovementGroundModule : CharacterMovementModule
             var positionBeforeStepUp = Vector3.zero;
             var moveBeforeStepUp = Vector3.zero;
 
-            _CapsuleResolvePenetration();
+            // _CapsuleResolvePenetration();
 
             for (uint it = 0; it < _MAX_MOVE_ITERATIONS; it++)
             {
-                remainingMove -= _charCapsule.CapsuleMove(remainingMove, out RaycastHit moveHit, out Vector3 moveHitNormal);
+                _MoveCapsule(remainingMove, out Vector3 moved, out RaycastHit moveHit, out Vector3 moveHitNormal);
+                remainingMove -= moved;
 
                 if (moveHitNormal == Vector3.zero)
                 {
                     moveHitNormal = moveHit.normal;
                 }
 
-                // perform step up recover
+                // if we stepped up previous iteration, perform step up recover
                 if (didStepUp && !didStepUpRecover)
                 {
                     didStepUp = false;
                     didStepUpRecover = true;
 
-                    _charCapsule.CapsuleMove(_character.down * stepUpHeight, out RaycastHit stepUpRecoverHit, out Vector3 stepUpRecoverHitNormal);
+                    _MoveCapsule(-_charUp * stepUpHeight, out _, out RaycastHit stepUpRecoverHit, out Vector3 stepUpRecoverHitNormal);
 
                     if (stepUpRecoverHit.collider)
                     {
@@ -353,27 +357,26 @@ class CharacterMovementGroundModule : CharacterMovementModule
                                 _charCapsule.capsule.position = positionBeforeStepUp;
                                 remainingMove = moveBeforeStepUp;
                                 canStepUp = false;
-
                                 continue;
                             }
                         }
                     }
                 }
 
-                // if there is no collision (no obstacle or remainingMove == 0) break the loop
+                // if there is no collision, end the move
                 if (moveHit.collider == null)
                 {
                     break;
                 }
 
-                // try sliding on the obstacle
+                // try moving up on the slope
                 if (_CalculateMoveOnSlope(remainingMove, out Vector3 slopeMove, moveHit, moveHitNormal))
                 {
                     remainingMove = slopeMove;
                     continue;
                 }
 
-                // step up the first time, we hit an obstacle
+                // step up
                 if (canStepUp && !didStepUp)
                 {
                     canStepUp = false;
@@ -382,24 +385,36 @@ class CharacterMovementGroundModule : CharacterMovementModule
                     positionBeforeStepUp = _charCapsule.capsule.position;
                     moveBeforeStepUp = remainingMove;
 
-                    stepUpHeight = _charCapsule.CapsuleMove(_charUp * _stepUpHeight).magnitude;
-
+                    _MoveCapsule(_charUp * _stepUpHeight, out Vector3 stepUpMoved);
+                    stepUpHeight = stepUpMoved.magnitude;
                     continue;
                 }
 
-                // try sliding along the obstacle
-                if (_CaclculateMoveAlongWall(remainingMove, move, out Vector3 slideMove, moveHit, moveHitNormal))
+                // treat the obstacle as a wall now
+                Vector3 wallHitProject = Vector3.ProjectOnPlane(moveHitNormal, _charUp);
+                remainingMove = Vector3.ProjectOnPlane(moveNormalized * remainingMove.magnitude, wallHitProject);
+
+                // avoid sliding along perpendicular surface for very small values which 
+                // could be a result of small miscalculations
+                if (_maintainVelocityAlongSurface &&
+                    remainingMove.magnitude > _MIN_MOVE_ALONG_SURFACE_TO_MAINTAIN_VELOCITY)
                 {
-                    remainingMove = slideMove;
-                    continue;
+                    remainingMove = remainingMove.normalized * remainingMove.magnitude;
                 }
+            }
 
-                // there's nothing we can do now, so stop the move
-                remainingMove = Vector3.zero;
+            // step down, but if there is a vertical move (possibly jump), don't step down.
+            if (moveV == Vector3.zero && _stepDownDepth > 0)
+            {
+                _MoveCapsule(-_charUp * _stepDownDepth, out Vector3 moved, out RaycastHit hit, out Vector3 hitNormal);
+                if (!_CanStandOn(hit, hitNormal))
+                {
+                    _charCapsule.capsule.position -= moved;
+                }
             }
         }
 
-        _StepDown(move);
+        // _StepDown(move);
         _CapsuleResolvePenetration();
     }
 
@@ -462,49 +477,37 @@ class CharacterMovementGroundModule : CharacterMovementModule
         return true;
     }
 
-    protected bool _CaclculateMoveAlongWall(Vector3 move, Vector3 originalMove, out Vector3 slideMove, RaycastHit hit, Vector3 hitNormal)
+    protected void _UpdateGroundResult()
     {
-        float moveMag = move.magnitude;
+        _prevGroundResult = _groundResult;
+        _CheckForGround(_groundCheckDepth, out _groundResult);
+    }
 
-        if (hit.collider == null || moveMag == 0f)
+    protected bool _CheckForGround(float depth, out GroundResult result)
+    {
+        _charCapsule.BaseSphereCast(-_charUp * depth, out RaycastHit hit, out Vector3 hitNormal);
+        if (hitNormal == Vector3.zero)
         {
-            slideMove = Vector3.zero;
-            return false;
+            hitNormal = hit.normal;
         }
 
-        _RecalculateNormalIfZero(hit, ref hitNormal);
+        result = new GroundResult();
 
-        Vector3 hitProject = Vector3.ProjectOnPlane(hitNormal, _charUp);
-        slideMove = Vector3.ProjectOnPlane(originalMove.normalized * moveMag, hitProject);
-        if (_maintainVelocityAlongSurface)
+        if (_CanStandOn(hit, hit.normal, out float slopeAngle) is false)
         {
-            // to avoid sliding along perpendicular surface for very small values,
-            // may be a result of small miscalculations
-            if (slideMove.magnitude > _MIN_MOVE_ALONG_SURFACE_TO_MAINTAIN_VELOCITY)
+            if (slopeAngle < 90f)
             {
-                slideMove = slideMove.normalized * moveMag;
+                return false;
             }
         }
 
-        return true;
-    }
-
-    protected bool _StepDown(Vector3 move)
-    {
-        var verticalMove = Vector3.Project(move, _charUp).magnitude;
-        if (verticalMove != 0f || _stepDownDepth <= 0)
-            return false;
-
-        _CapsuleResolvePenetration();
-
-        var moved = _charCapsule.CapsuleMove(_character.down * _stepDownDepth, out RaycastHit hit, out Vector3 hitNormal);
-
-        if (_CanStandOn(hit, hitNormal) == false)
-        {
-            _charCapsule.capsule.position -= moved;
-            return false;
-        }
-
+        result.collider = hit.collider;
+        result.direction = -_charUp;
+        result.distance = hit.distance;
+        result.angle = slopeAngle;
+        result.basePosition = result.collider.transform.position;
+        result.baseRotation = result.collider.transform.rotation;
+        result.edgeDistance = default;
         return true;
     }
 
@@ -551,38 +554,19 @@ class CharacterMovementGroundModule : CharacterMovementModule
         return true;
     }
 
-    protected bool _CastForGround(float depth, out GroundResult result)
+    protected void _MoveCapsule(Vector3 move, out Vector3 moved)
     {
-        _charCapsule.BaseSphereCast(_character.down * depth, out RaycastHit hit, out Vector3 hitNormal);
-        if (hitNormal == Vector3.zero)
-        {
-            hitNormal = hit.normal;
-        }
-
-        result = new GroundResult();
-
-        if (_CanStandOn(hit, hit.normal, out float slopeAngle) is false)
-        {
-            if (slopeAngle < 90f)
-            {
-                return false;
-            }
-        }
-
-        result.collider = hit.collider;
-        result.direction = _character.down;
-        result.distance = hit.distance;
-        result.angle = slopeAngle;
-        result.basePosition = result.collider.transform.position;
-        result.baseRotation = result.collider.transform.rotation;
-        result.edgeDistance = default;
-        return true;
+        moved = _charCapsule.CapsuleMove(move);
     }
 
-    protected void _UpdateGroundResult()
+    protected void _MoveCapsule(Vector3 move, out Vector3 moved, out RaycastHit innerHit, out RaycastHit outerHit)
     {
-        _prevGroundResult = _groundResult;
-        _CastForGround(_groundCheckDepth, out _groundResult);
+        moved = _charCapsule.CapsuleMove(move, out innerHit, out outerHit);
+    }
+
+    protected void _MoveCapsule(Vector3 move, out Vector3 moved, out RaycastHit hit, out Vector3 normal)
+    {
+        moved = _charCapsule.CapsuleMove(move, out hit, out normal);
     }
 
     protected void _CapsuleResolvePenetration()
@@ -599,7 +583,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
     //// Fields
     //// -------------------------------------------------------------------------------------------
 
-    protected const uint _MAX_MOVE_ITERATIONS = 10;
+    protected string _debugModuleName = "Ground Module";
+
+    protected const uint _MAX_MOVE_ITERATIONS = 6;
     protected const float _MIN_MOVE_ALONG_SURFACE_TO_MAINTAIN_VELOCITY = .0001f;
     protected const float _MIN_SLOPE_ANGLE = 0f;
     protected const float _MAX_SLOPE_ANGLE = 89.9f;
