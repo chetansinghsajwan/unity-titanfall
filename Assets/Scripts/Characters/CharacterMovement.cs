@@ -18,7 +18,7 @@ class CharacterMovement : CharacterBehaviour
             layerMask = charAsset.groundLayer,
             triggerInteraction = QueryTriggerInteraction.Ignore
         };
-        _skinWidth = .2f;
+        _skinWidth = .02f;
         _collider = GetComponent<CapsuleCollider>();
         _velocity = Vector3.zero;
 
