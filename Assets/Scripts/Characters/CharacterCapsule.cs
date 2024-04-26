@@ -53,7 +53,15 @@ struct CharacterCapsule
     public bool BaseSphereCast(Vector3 move, out RaycastHit hit, out Vector3 hitNormal)
     {
         bool didHit = BaseSphereCast(move, out hit);
-        RecalculateNormal(hit, move.normalized, out hitNormal);
+
+        if (hit.collider == null)
+        {
+            hitNormal = hit.normal;
+        }
+        else
+        {
+            RecalculateNormal(hit, move.normalized, out hitNormal);
+        }
 
         return didHit;
     }
@@ -141,7 +149,14 @@ struct CharacterCapsule
         Vector3 moved = CapsuleMove(move, out innerHit, out outerHit);
         RaycastHit hit = innerHit.collider != null ? innerHit : outerHit;
 
-        RecalculateNormal(hit, move.normalized, out hitNormal);
+        if (hit.collider != null)
+        {
+            RecalculateNormal(hit, move.normalized, out hitNormal);
+        }
+        else
+        {
+            hitNormal = hit.normal;
+        }
 
         return moved;
     }

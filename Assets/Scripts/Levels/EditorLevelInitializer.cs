@@ -5,6 +5,9 @@ class EditorLevelInitializer : MonoBehaviour
 {
     public void Start()
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
         PlayerManager.System = new PlayerManagerSystem();
 
         Transform spawnPoint = sceneObject.playerSpawnPoints.
