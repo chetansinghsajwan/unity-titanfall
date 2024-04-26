@@ -195,6 +195,8 @@ class CharacterMovementAirModule : CharacterMovementModule
         remainingMove = slideMove;
     }
 
+    protected string _debugModuleName = "Air Module";
+
     protected CharacterMovementGroundModule _groundModule;
     protected CharacterCapsule _charCapsule;
 

@@ -108,7 +108,7 @@ struct CharacterCapsule
             smallHit = new RaycastHit();
             bigHit = new RaycastHit();
 
-            CapsuleResolvePenetration();
+            // CapsuleResolvePenetration();
 
             return Vector3.zero;
         }
@@ -129,7 +129,7 @@ struct CharacterCapsule
 
         capsule.position += direction * distance;
 
-        CapsuleResolvePenetration();
+        // CapsuleResolvePenetration();
 
         return direction * Math.Max(0f, distance);
     }
