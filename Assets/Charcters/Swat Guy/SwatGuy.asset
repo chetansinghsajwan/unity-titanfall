@@ -18,7 +18,7 @@ MonoBehaviour:
   tppPrefab: {fileID: 6526974782931169490, guid: 79e02451be545264ba8f6991f17f127d, type: 3}
   fppPrefab: {fileID: 0}
   characterMass: 80
-  groundCheckDepth: 1
+  groundCheckDepth: 0.4
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -34,8 +34,8 @@ MonoBehaviour:
   groundStandSprintLeftAngleMax: -46
   groundStandSprintRightAngleMax: 46
   groundStandJumpForce: 10
-  groundStandStepUpPercent: 40
-  groundStandStepDownPercent: 40
+  groundStandStepUpPercent: 20
+  groundStandStepDownPercent: 20
   groundStandSlopeUpAngle: 45
   groundStandSlopeDownAngle: -45
   groundStandCapsuleCenter: {x: 0, y: 1, z: 0}

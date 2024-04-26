@@ -254,6 +254,20 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _charCapsule.collider = _charMovement.collider;
         _deltaTime = Time.deltaTime;
 
+        // if we jumped before, we only run this module if we are coming down now.
+        if (_didJump)
+        {
+            // get vertical velocity respective to character orientation.
+            Vector3 upVelocity = Vector3.Project(_velocity, _charUp);
+            float angle = Vector3.Angle(upVelocity, _charUp);
+
+            // if angle is 0, we are going in the same direction as the `_charUp`.
+            if (angle == 0)
+                return false;
+
+            _didJump = false;
+        }
+
         _UpdateGroundResult();
 
         _baseDeltaPosition = Vector3.zero;
@@ -289,6 +303,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
         if (_doJump)
         {
             _doJump = false;
+            _didJump = true;
             move += _charUp * _jumpPower * _deltaTime;
         }
 
@@ -402,15 +417,15 @@ class CharacterMovementGroundModule : CharacterMovementModule
                     remainingMove = remainingMove.normalized * remainingMove.magnitude;
                 }
             }
+        }
 
-            // step down, but if there is a vertical move (possibly jump), don't step down.
-            if (moveV == Vector3.zero && _stepDownDepth > 0)
+        // step down, but if there is a vertical move (possibly jump), don't step down.
+        if (!_didJump && _stepDownDepth > 0)
+        {
+            _MoveCapsule(-_charUp * _stepDownDepth, out Vector3 moved, out RaycastHit hit, out Vector3 hitNormal);
+            if (!_CanStandOn(hit, hitNormal))
             {
-                _MoveCapsule(-_charUp * _stepDownDepth, out Vector3 moved, out RaycastHit hit, out Vector3 hitNormal);
-                if (!_CanStandOn(hit, hitNormal))
-                {
-                    _charCapsule.capsule.position -= moved;
-                }
+                _charCapsule.capsule.position -= moved;
             }
         }
 
@@ -605,6 +620,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
 
     protected Vector3 _moveVector = Vector3.zero;
     protected bool _doJump = false;
+    protected bool _didJump = false;
     protected float _moveSpeed = 0;
     protected float _moveAccel = 0;
     protected float _jumpPower = 0;
