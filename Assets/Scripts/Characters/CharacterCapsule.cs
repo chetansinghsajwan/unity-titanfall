@@ -5,7 +5,7 @@ using System.Diagnostics.Contracts;
 
 struct CharacterCapsule
 {
-    public const float COLLISION_OFFSET = 0f;
+    public const float COLLISION_OFFSET = .001f;
     public const float RECALCULATE_NORMAL_FALLBACK = .01f;
     public const float RECALCULATE_NORMAL_ADDON = .001f;
 

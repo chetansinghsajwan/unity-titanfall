@@ -112,6 +112,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _moveAccel = _standDeacceleration;
         _moveSpeed = 0;
         _jumpPower = _standJumpForce;
+        _targetCapsuleCenter = _standCapsuleCenter;
+        _targetCapsuleHeight = _standCapsuleHeight;
+        _targetCapsuleRadius = _standCapsuleRadius;
     }
 
     public void SwitchToStandWalk()
@@ -126,6 +129,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _moveAccel = _standWalkAcceleration;
         _moveSpeed = _standWalkSpeed;
         _jumpPower = _standJumpForce;
+        _targetCapsuleCenter = _standCapsuleCenter;
+        _targetCapsuleHeight = _standCapsuleHeight;
+        _targetCapsuleRadius = _standCapsuleRadius;
     }
 
     public void SwitchToStandRun()
@@ -140,6 +146,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _moveAccel = _standRunAcceleration;
         _moveSpeed = _standRunSpeed;
         _jumpPower = _standJumpForce;
+        _targetCapsuleCenter = _standCapsuleCenter;
+        _targetCapsuleHeight = _standCapsuleHeight;
+        _targetCapsuleRadius = _standCapsuleRadius;
     }
 
     public void SwitchToStandSprint()
@@ -154,6 +163,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _moveAccel = _standSprintAcceleration;
         _moveSpeed = _standSprintSpeed;
         _jumpPower = _standJumpForce;
+        _targetCapsuleCenter = _standCapsuleCenter;
+        _targetCapsuleHeight = _standCapsuleHeight;
+        _targetCapsuleRadius = _standCapsuleRadius;
     }
 
     public void SwitchToCrouchIdle()
@@ -454,8 +466,13 @@ class CharacterMovementGroundModule : CharacterMovementModule
         float resizeSpeed = isCrouching ? _standToCrouchResizeSpeed : _crouchToStandResizeSpeed;
         resizeSpeed *= _deltaTime;
 
-        _charCapsule.capsule.height = Mathf.Lerp(_charCapsule.capsule.height, _targetCapsuleHeight, resizeSpeed);
-        _charCapsule.capsule.radius = Mathf.Lerp(_charCapsule.capsule.radius, _targetCapsuleRadius, resizeSpeed);
+        float heightBeforeResize = _charCapsule.capsule.actualHeight;
+        _charCapsule.capsule.height = Mathf.MoveTowards(_charCapsule.capsule.height, _targetCapsuleHeight, resizeSpeed);
+        _charCapsule.capsule.radius = Mathf.MoveTowards(_charCapsule.capsule.radius, _targetCapsuleRadius, resizeSpeed);
+        float heightAfterResize = _charCapsule.capsule.actualHeight;
+
+        float deltaHeight = heightAfterResize - heightBeforeResize;
+        _charCapsule.capsule.position += _charUp * (deltaHeight / 2);
     }
 
     protected void _UpdateGroundResult()
@@ -476,7 +493,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
             hit = hit
         };
 
-        if (hit.collider != null)
+        if (hit.collider == null)
         {
             return false;
         }
@@ -485,7 +502,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
 
         result.groundAngle = groundAngle;
         result.groundPosition = hit.collider.transform.position;
-        result.groundRotation= hit.collider.transform.rotation;
+        result.groundRotation = hit.collider.transform.rotation;
 
         return canStand;
     }

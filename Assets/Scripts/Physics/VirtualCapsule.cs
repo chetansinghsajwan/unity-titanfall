@@ -139,10 +139,12 @@ public struct VirtualCapsule
             _UpdateCache();
         }
     }
+
     public float diameter
     {
         get => _radius * 2f;
     }
+
     public float height
     {
         get => _height;
@@ -152,6 +154,12 @@ public struct VirtualCapsule
             _UpdateCache();
         }
     }
+
+    public float actualHeight
+    {
+        get => Mathf.Max(_height, _radius * 2f);
+    }
+
     public float cylinderHeight
     {
         get => Mathf.Max(0, _height - (_radius * 2f));
