@@ -2,11 +2,10 @@ using System;
 using UnityEngine;
 using GameFramework.Extensions;
 using System.Diagnostics.Contracts;
-using UnityEngine.Assertions.Must;
 
 struct CharacterCapsule
 {
-    public const float COLLISION_OFFSET = .001f;
+    public const float COLLISION_OFFSET = 0f;
     public const float RECALCULATE_NORMAL_FALLBACK = .01f;
     public const float RECALCULATE_NORMAL_ADDON = .001f;
 
@@ -116,8 +115,6 @@ struct CharacterCapsule
             innerHit = new RaycastHit();
             outerHit = new RaycastHit();
 
-            // CapsuleResolvePenetration();
-
             return Vector3.zero;
         }
 
@@ -136,8 +133,6 @@ struct CharacterCapsule
         }
 
         capsule.position += direction * distance;
-
-        // CapsuleResolvePenetration();
 
         return direction * Math.Max(0f, distance);
     }

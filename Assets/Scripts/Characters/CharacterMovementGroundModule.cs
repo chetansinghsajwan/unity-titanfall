@@ -2,7 +2,6 @@
 using System.Diagnostics.Contracts;
 using GameFramework.Extensions;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 [Serializable]
 class CharacterMovementGroundModule : CharacterMovementModule
@@ -12,22 +11,17 @@ class CharacterMovementGroundModule : CharacterMovementModule
     {
         public static readonly GroundResult Invalid = new GroundResult();
 
-        public GameObject gameObject => collider ? collider.gameObject : null;
-        public Collider collider;
-        public int layer => gameObject ? gameObject.layer : 0;
+        // the raycast hit during check
+        public RaycastHit hit;
 
-        public Vector3 direction;
-        public float distance;
-        public float angle;
-        public float edgeDistance;
+        // the angle of ground respective to character up direction during check
+        public float groundAngle;
 
-        public Vector3 basePosition;
-        public Quaternion baseRotation;
+        // the position of ground during check
+        public Vector3 groundPosition;
 
-        public bool isValid
-        {
-            get => collider != null;
-        }
+        // the rotation of ground during check
+        public Quaternion groundRotation;
     }
 
     public enum MovementState : byte
@@ -49,9 +43,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
     {
         Contract.Assume(charAsset is not null);
 
-        _prevGroundResult = GroundResult.Invalid;
         _groundResult = GroundResult.Invalid;
-
         _groundCheckDepth = charAsset.groundCheckDepth;
         _groundLayer = charAsset.groundLayer;
         _minMoveDistance = charAsset.groundMinMoveDistance;
@@ -220,9 +212,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
         _doJump = true;
     }
 
-    public bool CanStandOnGround(RaycastHit hit, Vector3 slopeNormal, out float slopeAngle)
+    public bool CanStandOnGround(RaycastHit hit, Vector3 hitNormal, out float groundAngle)
     {
-        return _CanStandOn(hit, slopeNormal, out slopeAngle);
+        return _CanStandOn(hit, hitNormal, out groundAngle);
     }
 
     //// -------------------------------------------------------------------------------------------
@@ -269,14 +261,15 @@ class CharacterMovementGroundModule : CharacterMovementModule
         }
 
         _UpdateGroundResult();
+        Collider groundCollider = _groundResult.hit.collider;
 
         _baseDeltaPosition = Vector3.zero;
         _baseDeltaRotation = Vector3.zero;
 
-        if (_groundResult.isValid)
+        if (groundCollider != null)
         {
-            _baseDeltaPosition = _groundResult.collider.transform.position - _groundResult.basePosition;
-            _baseDeltaRotation = _groundResult.collider.transform.rotation.eulerAngles - _groundResult.baseRotation.eulerAngles;
+            _baseDeltaPosition = groundCollider.transform.position - _groundResult.groundPosition;
+            _baseDeltaRotation = groundCollider.transform.rotation.eulerAngles - _groundResult.groundRotation.eulerAngles;
         }
 
         if (_baseDeltaPosition != Vector3.zero || _baseDeltaRotation != Vector3.zero)
@@ -284,7 +277,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
             return true;
         }
 
-        return _groundResult.isValid;
+        return groundCollider != null;
     }
 
     public override void RunPhysics(out VirtualCapsule result)
@@ -309,7 +302,6 @@ class CharacterMovementGroundModule : CharacterMovementModule
 
         _UpdateCapsuleSize();
         _PerformMove(move);
-        _lastMovementState = _movementState;
 
         result = _charCapsule.capsule;
     }
@@ -324,6 +316,8 @@ class CharacterMovementGroundModule : CharacterMovementModule
         Vector3 moveV = move - moveH;
         Vector3 moveNormalized = move.normalized;
 
+        _CapsuleResolvePenetration();
+
         // perform the vertical move (usually jump)
         if (moveV != Vector3.zero)
         {
@@ -334,24 +328,17 @@ class CharacterMovementGroundModule : CharacterMovementModule
         Vector3 remainingMove = moveH;
         if (remainingMove.magnitude > _minMoveDistance)
         {
-            var stepUpHeight = 0f;
-            var canStepUp = moveV == Vector3.zero;
-            var didStepUp = false;
-            var didStepUpRecover = false;
-            var positionBeforeStepUp = Vector3.zero;
-            var moveBeforeStepUp = Vector3.zero;
-
-            // _CapsuleResolvePenetration();
+            var stepUpHeight = 0f;                      // the height by which we stepped up, used during step up recover
+            var canStepUp = moveV == Vector3.zero;      // allow step up if there is no vertical move (possibly jump)
+            var didStepUp = false;                      // did we step up in previous iterations
+            var didStepUpRecover = false;               // did we recover the previous step up
+            var positionBeforeStepUp = Vector3.zero;    // used to revert the step up move
+            var moveBeforeStepUp = Vector3.zero;        // used to revert the step up move
 
             for (uint it = 0; it < _MAX_MOVE_ITERATIONS; it++)
             {
                 _MoveCapsule(remainingMove, out Vector3 moved, out RaycastHit moveHit, out Vector3 moveHitNormal);
                 remainingMove -= moved;
-
-                if (moveHitNormal == Vector3.zero)
-                {
-                    moveHitNormal = moveHit.normal;
-                }
 
                 // if we stepped up previous iteration, perform step up recover
                 if (didStepUp && !didStepUpRecover)
@@ -361,19 +348,16 @@ class CharacterMovementGroundModule : CharacterMovementModule
 
                     _MoveCapsule(-_charUp * stepUpHeight, out _, out RaycastHit stepUpRecoverHit, out Vector3 stepUpRecoverHitNormal);
 
-                    if (stepUpRecoverHit.collider)
+                    if (stepUpRecoverHit.collider != null)
                     {
                         // if we cannot step on this _ground, revert the step up
                         // and continue the loop without stepping up this time
                         if (_CanStandOn(stepUpRecoverHit, stepUpRecoverHitNormal, out float baseAngle) == false)
                         {
-                            if (baseAngle < 90f)
-                            {
-                                _charCapsule.capsule.position = positionBeforeStepUp;
-                                remainingMove = moveBeforeStepUp;
-                                canStepUp = false;
-                                continue;
-                            }
+                            _charCapsule.capsule.position = positionBeforeStepUp;
+                            remainingMove = moveBeforeStepUp;
+                            canStepUp = false;
+                            continue;
                         }
                     }
                 }
@@ -419,18 +403,35 @@ class CharacterMovementGroundModule : CharacterMovementModule
             }
         }
 
-        // step down, but if there is a vertical move (possibly jump), don't step down.
+        // step down, but if we jumped previously, don't step down.
         if (!_didJump && _stepDownDepth > 0)
         {
             _MoveCapsule(-_charUp * _stepDownDepth, out Vector3 moved, out RaycastHit hit, out Vector3 hitNormal);
-            if (!_CanStandOn(hit, hitNormal))
+            if (hit.collider != null && !_CanStandOn(hit, hitNormal, out _))
             {
                 _charCapsule.capsule.position -= moved;
             }
         }
+    }
 
-        // _StepDown(move);
-        _CapsuleResolvePenetration();
+    protected bool _CalculateMoveOnSlope(Vector3 move, out Vector3 slopeMove, RaycastHit hit, Vector3 hitNormal)
+    {
+        Contract.Assert(hit.collider != null);
+
+        if (!_CanStandOn(hit, hitNormal, out float slopeAngle))
+        {
+            slopeMove = Vector3.zero;
+            return false;
+        }
+
+        // We don't just project here, because that gives undesired results for horizontal moves.
+        Plane plane = new Plane(hitNormal, hit.point);
+        Ray ray = new Ray(hit.point + move, _charUp);
+        plane.Raycast(ray, out float up);
+        slopeMove = move + (_charUp * up);
+        slopeMove = slopeMove.normalized * move.magnitude;
+
+        return true;
     }
 
     protected void _RecoverFromBaseMove()
@@ -453,49 +454,12 @@ class CharacterMovementGroundModule : CharacterMovementModule
         float resizeSpeed = isCrouching ? _standToCrouchResizeSpeed : _crouchToStandResizeSpeed;
         resizeSpeed *= _deltaTime;
 
-        // charCapsule.localPosition += charCapsule.up * Mathf.MoveTowards(charCapsule.localHeight, _targetCapsuleHeight, resizeSpeed);
-        // _charCapsule.capsule.center = Vector3.Lerp(mCapsule.center, _targetCapsuleCenter, resizeSpeed);
         _charCapsule.capsule.height = Mathf.Lerp(_charCapsule.capsule.height, _targetCapsuleHeight, resizeSpeed);
         _charCapsule.capsule.radius = Mathf.Lerp(_charCapsule.capsule.radius, _targetCapsuleRadius, resizeSpeed);
-
-        float weight = 0;
-        weight = Mathf.Lerp(weight, 1f, resizeSpeed);
-        // _movementStateWeight = weight;
-    }
-
-    protected bool _CalculateMoveOnSlope(Vector3 move, out Vector3 slopeMove, RaycastHit hit, Vector3 hitNormal)
-    {
-        if (move == Vector3.zero)
-        {
-            slopeMove = Vector3.zero;
-            return false;
-        }
-
-        if (!_CanStandOn(hit, hitNormal, out float slopeAngle))
-        {
-            slopeMove = Vector3.zero;
-            return false;
-        }
-
-        if (slopeAngle == 0f)
-        {
-            slopeMove = Vector3.zero;
-            return false;
-        }
-
-        // We don't just project here, because that gives undesired results for horizontal moves.
-        Plane plane = new Plane(hitNormal, hit.point);
-        Ray ray = new Ray(hit.point + move, _charUp);
-        plane.Raycast(ray, out float up);
-        slopeMove = move + (_charUp * up);
-        slopeMove = slopeMove.normalized * move.magnitude;
-
-        return true;
     }
 
     protected void _UpdateGroundResult()
     {
-        _prevGroundResult = _groundResult;
         _CheckForGround(_groundCheckDepth, out _groundResult);
     }
 
@@ -507,62 +471,45 @@ class CharacterMovementGroundModule : CharacterMovementModule
             hitNormal = hit.normal;
         }
 
-        result = new GroundResult();
-
-        if (_CanStandOn(hit, hitNormal, out float slopeAngle) is false)
+        result = new GroundResult
         {
-            if (slopeAngle < 90f)
-            {
-                return false;
-            }
+            hit = hit
+        };
+
+        if (hit.collider != null)
+        {
+            return false;
         }
 
-        result.collider = hit.collider;
-        result.direction = -_charUp;
-        result.distance = hit.distance;
-        result.angle = slopeAngle;
-        result.basePosition = result.collider.transform.position;
-        result.baseRotation = result.collider.transform.rotation;
-        result.edgeDistance = default;
-        return true;
+        bool canStand = _CanStandOn(hit, hitNormal, out float groundAngle);
+
+        result.groundAngle = groundAngle;
+        result.groundPosition = hit.collider.transform.position;
+        result.groundRotation= hit.collider.transform.rotation;
+
+        return canStand;
     }
 
     protected bool _CheckIsGround(Collider collider)
     {
-        if (collider == null)
-        {
-            return false;
-        }
+        Contract.Assert(collider != null);
 
         return _groundLayer.Contains(collider.gameObject.layer);
     }
 
-    protected bool _CanStandOn(RaycastHit hit)
+    protected bool _CanStandOn(RaycastHit hit, Vector3 hitNormal, out float groundAngle)
     {
-        return _CanStandOn(hit, Vector3.zero);
-    }
+        Contract.Assert(hit.collider != null);
+        Contract.Assert(hitNormal != Vector3.zero);
 
-    protected bool _CanStandOn(RaycastHit hit, Vector3 slopeNormal)
-    {
-        return _CanStandOn(hit, slopeNormal, out float slopeAngle);
-    }
-
-    protected bool _CanStandOn(RaycastHit hit, Vector3 slopeNormal, out float slopeAngle)
-    {
-        slopeAngle = 0f;
-
-        if (hit.collider == null)
-            return false;
-
-        if (_CheckIsGround(hit.collider) is false)
+        if (!_CheckIsGround(hit.collider))
         {
+            groundAngle = 0f;
             return false;
         }
 
-        _RecalculateNormalIfZero(hit, ref slopeNormal);
-
-        slopeAngle = Vector3.Angle(_charUp, slopeNormal);
-        if (slopeAngle < _MIN_SLOPE_ANGLE || slopeAngle > _maxSlopeUpAngle)
+        groundAngle = Vector3.Angle(_charUp, hitNormal);
+        if (groundAngle < _MIN_SLOPE_ANGLE || groundAngle > _maxSlopeUpAngle)
         {
             return false;
         }
@@ -583,6 +530,10 @@ class CharacterMovementGroundModule : CharacterMovementModule
     protected void _MoveCapsule(Vector3 move, out Vector3 moved, out RaycastHit hit, out Vector3 normal)
     {
         moved = _charCapsule.CapsuleMove(move, out hit, out normal);
+        if (normal == Vector3.zero)
+        {
+            normal = hit.normal;
+        }
     }
 
     protected void _CapsuleResolvePenetration()
@@ -599,7 +550,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
     //// Fields
     //// -------------------------------------------------------------------------------------------
 
-    protected string _debugModuleName = "Ground Module";
+    protected const string _debugModuleName = "Ground Module";
 
     protected const uint _MAX_MOVE_ITERATIONS = 6;
     protected const float _MIN_MOVE_ALONG_SURFACE_TO_MAINTAIN_VELOCITY = .0001f;
@@ -610,13 +561,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
     protected CharacterView _charView;
     protected CharacterCapsule _charCapsule;
     protected GroundResult _groundResult;
-    protected GroundResult _prevGroundResult;
     protected Vector3 _baseDeltaPosition;
     protected Vector3 _baseDeltaRotation;
-
-    protected MovementState _movementState;             // current state to process
-    protected MovementState _lastMovementState;         // last processed state, could be same as current state
-    protected MovementState _prevMovementState;         // previous state, different from current state
+    protected MovementState _movementState;
 
     protected Vector3 _moveVector = Vector3.zero;
     protected bool _doJump = false;
