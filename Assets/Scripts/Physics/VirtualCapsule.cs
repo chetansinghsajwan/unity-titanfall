@@ -8,9 +8,9 @@ public struct VirtualCapsule
     public const int DEFAULT_LAYER_MASK = Physics.DefaultRaycastLayers;
     public const QueryTriggerInteraction DEFAULT_TRIGGER_QUERY = QueryTriggerInteraction.Ignore;
 
-    private struct TempColliderUser : IDisposable
+    private struct _TempColliderUser : IDisposable
     {
-        public TempColliderUser(VirtualCapsule capsule, CapsuleCollider collider)
+        public _TempColliderUser(VirtualCapsule capsule, CapsuleCollider collider)
         {
             // cache values
             _collider = collider;
@@ -38,19 +38,6 @@ public struct VirtualCapsule
         private float _radius;
         private float _height;
     }
-
-    [SerializeField] private Vector3 _position;
-    [SerializeField] private Quaternion _rotation;
-    [SerializeField] private float _height;
-    [SerializeField] private float _radius;
-
-    // cached values for performance
-    private Vector3 _topSphere;
-    private Vector3 _baseSphere;
-    private Vector3 _dirUp;
-
-    private LayerMask _layerMask;
-    private QueryTriggerInteraction _triggerInteraction;
 
     public VirtualCapsule(int layerMask = DEFAULT_LAYER_MASK,
         QueryTriggerInteraction triggerInteraction = DEFAULT_TRIGGER_QUERY)
@@ -82,7 +69,7 @@ public struct VirtualCapsule
         ReadValuesFrom(controller);
     }
 
-    private void InternalUpdateCache()
+    private void _UpdateCache()
     {
         float length = Mathf.Max(0, (_height / 2f) - _radius);
         _topSphere = _position + (_dirUp * length);
@@ -106,7 +93,7 @@ public struct VirtualCapsule
         set
         {
             _position = value;
-            InternalUpdateCache();
+            _UpdateCache();
         }
     }
     public Vector3 topSpherePos
@@ -133,7 +120,7 @@ public struct VirtualCapsule
         {
             _rotation = value;
             _dirUp = _rotation * Vector3.up;
-            InternalUpdateCache();
+            _UpdateCache();
         }
     }
     public Vector3 forward => _rotation * Vector3.forward;
@@ -149,7 +136,7 @@ public struct VirtualCapsule
         set
         {
             _radius = value;
-            InternalUpdateCache();
+            _UpdateCache();
         }
     }
     public float diameter
@@ -162,7 +149,7 @@ public struct VirtualCapsule
         set
         {
             _height = value;
-            InternalUpdateCache();
+            _UpdateCache();
         }
     }
     public float cylinderHeight
@@ -244,7 +231,7 @@ public struct VirtualCapsule
 
         // cache values
         _dirUp = _rotation * Vector3.up;
-        InternalUpdateCache();
+        _UpdateCache();
     }
 
     // Writes the values of VirtualCapsule to CapsuleCollider.
@@ -330,7 +317,7 @@ public struct VirtualCapsule
 
         // cache values
         _dirUp = _rotation * Vector3.up;
-        InternalUpdateCache();
+        _UpdateCache();
     }
 
     // Writes the values of VirtualCapsule to CharacterController.
@@ -556,7 +543,7 @@ public struct VirtualCapsule
             return false;
         }
 
-        using (var temp = new TempColliderUser(this, thisCollider))
+        using (var temp = new _TempColliderUser(this, thisCollider))
         {
             // Note: Physics.ComputePenetration does not always return values when the colliders overlap.
             bool result = Physics.ComputePenetration(thisCollider, _position, _rotation,
@@ -586,7 +573,7 @@ public struct VirtualCapsule
             return false;
         }
 
-        using (var temp = new TempColliderUser(this, thisCollider))
+        using (var temp = new _TempColliderUser(this, thisCollider))
         {
             foreach (var otherCollider in overlaps)
             {
@@ -631,4 +618,17 @@ public struct VirtualCapsule
     }
 
 #endif
+
+    [SerializeField] private Vector3 _position;
+    [SerializeField] private Quaternion _rotation;
+    [SerializeField] private float _height;
+    [SerializeField] private float _radius;
+
+    // cached values for performance
+    private Vector3 _topSphere;
+    private Vector3 _baseSphere;
+    private Vector3 _dirUp;
+
+    private LayerMask _layerMask;
+    private QueryTriggerInteraction _triggerInteraction;
 }
