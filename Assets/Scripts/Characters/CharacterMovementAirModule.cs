@@ -1,30 +1,38 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics.Contracts;
+using UnityEngine;
 
 class CharacterMovementAirModule : CharacterMovementModule
 {
-    protected const uint AIR_MAX_MOVE_ITERATIONS = 10;
-    protected const float GRAVITY_MULTIPLIER = .05f;
+    public const uint MAX_MOVE_ITERATIONS = 5;
+    public const float GRAVITY_MULTIPLIER = .05f;
 
     public CharacterMovementAirModule(CharacterAsset charAsset)
     {
-        // cache Data from CharacterDataSource
-        if (charAsset is not null)
-        {
-            _gravityAcceleration = charAsset.airGravityAcceleration;
-            _gravityMaxSpeed = charAsset.airGravityMaxSpeed;
-            _minMoveDistance = charAsset.airMinMoveDistance;
-            _moveSpeed = charAsset.airMoveSpeed;
-            _moveAcceleration = charAsset.airMoveAcceleration;
-            _jumpPower = charAsset.airJumpPower;
-            _maxJumpCount = charAsset.airMaxJumpCount;
-        }
+        Contract.Assert(charAsset != null);
+
+        _gravityAcceleration = charAsset.airGravityAcceleration;
+        _gravityMaxSpeed = charAsset.airGravityMaxSpeed;
+        _minMoveDistance = charAsset.airMinMoveDistance;
+        _moveSpeed = charAsset.airMoveSpeed;
+        _moveAcceleration = charAsset.airMoveAcceleration;
     }
 
     public override void OnLoaded(CharacterMovement charMovement)
     {
         base.OnLoaded(charMovement);
 
-        UpdateGroundModule();
+        _groundModule = null;
+        if (_charMovement != null)
+        {
+            foreach (CharacterMovementModule module in _charMovement.modules)
+            {
+                if (module is CharacterMovementGroundModule)
+                {
+                    _groundModule = module as CharacterMovementGroundModule;
+                    break;
+                }
+            }
+        }
     }
 
     public override bool ShouldRun()
@@ -43,156 +51,38 @@ class CharacterMovementAirModule : CharacterMovementModule
 
     public override void RunPhysics(out VirtualCapsule result)
     {
-        _UpdateValues();
+        float gravitySpeed = _gravityAcceleration * _character.mass * _deltaTime * _deltaTime * GRAVITY_MULTIPLIER;
+        Vector3 gravityVelocity = _charUp * gravitySpeed;
+        Vector3 move = _velocity * _deltaTime + gravityVelocity;
 
-        Vector3 charUp = _charUp;
-        Vector3 charForward = _character.forward;
-        Vector3 charRight = _character.right;
-        float mass = _character.mass;
-        float gravitySpeed = _gravityAcceleration * mass * _deltaTime * _deltaTime * GRAVITY_MULTIPLIER;
-
-        Vector3 vel = _velocity * _deltaTime;
-        Vector3 velH = Vector3.ProjectOnPlane(vel, charUp);
-        Vector3 velV = vel - velH;
-
-        Vector3 moveV = velV + (charUp * gravitySpeed);
-        Vector3 moveH = velH;
-
-        // Vector3 moveHX = Vector3.ProjectOnPlane(moveH, charForward);
-        // Vector3 moveHZ = moveH - moveHX;
-        // // processed move input
-        // Vector3 moveInputRaw = _move;
-        // Vector3 moveInput = new Vector3(moveInputRaw.x, 0f, moveInputRaw.y);
-        // moveInput = Quaternion.Euler(0f, _charView.turnAngle, 0f) * moveInput;
-        // moveInput = character.rotation * moveInput;
-
-        // // helping movement in mAir
-        // Vector3 move_help_h = _curMoveSpeed * moveInput * mDeltaTime;
-        // Vector3 move_help_h_x = Vector3.ProjectOnPlane(move_help_h, charForward);
-        // Vector3 move_help_h_z = move_help_h - move_help_h_x;
-
-        // if (move_help_h_x.magnitude > 0f)
-        // {
-        //     if (moveHX.normalized == move_help_h_x.normalized)
-        //     {
-        //         if (move_help_h_x.magnitude > moveHX.magnitude)
-        //         {
-        //             moveHX = move_help_h_x;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         moveHX = move_help_h_x;
-        //     }
-        // }
-
-        // if (move_help_h_z.magnitude > 0f)
-        // {
-        //     if (moveHZ.normalized == move_help_h_z.normalized)
-        //     {
-        //         if (move_help_h_z.magnitude > moveHZ.magnitude)
-        //         {
-        //             moveHZ = move_help_h_z;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         moveHZ = move_help_h_z;
-        //     }
-        // }
-
-        // moveH = moveHX + moveHZ;
-
-        // process character jump
-        if (_inputJump && _curJumpCount < _maxJumpCount)
-        {
-            _curJumpCount++;
-
-            if (_curMaintainVelocityOnJump == false)
-            {
-                moveV = Vector3.zero;
-            }
-
-            moveV = charUp * _curJumpPower;
-        }
-
-        Vector3 move = moveH + moveV;
-
-        PerformMove(move);
+        _PerformMove(move);
         result = _charCapsule.capsule;
     }
 
-    protected virtual void UpdateGroundModule()
-    {
-        _groundModule = null;
-        if (_charMovement is not null)
-        {
-            foreach (var module in _charMovement.modules)
-            {
-                if (module is CharacterMovementGroundModule)
-                {
-                    _groundModule = module as CharacterMovementGroundModule;
-                }
-            }
-        }
-    }
-
-    protected virtual void _UpdateValues()
-    {
-        _curMoveAccel = _moveAcceleration;
-        _curMoveSpeed = _moveSpeed;
-        _curJumpPower = _jumpPower;
-        _curMaxJumpCount = _maxJumpCount;
-        _curMinMoveDist = _minMoveDistance;
-
-        // TODO: add this field in data asset
-        _curMaintainVelocityOnJump = false;
-    }
-
-    protected virtual void PerformMove(Vector3 move)
+    protected void _PerformMove(Vector3 move)
     {
         Vector3 remainingMove = move;
-
-        for (int i = 0; i < AIR_MAX_MOVE_ITERATIONS; i++)
+        for (int it = 0; it < MAX_MOVE_ITERATIONS; it++)
         {
             remainingMove -= _charCapsule.CapsuleMove(remainingMove, out RaycastHit hit, out Vector3 hitNormal);
-
-            if (hit.collider is null)
+            if (hitNormal == Vector3.zero)
             {
-                // no collision, so end the move
-                remainingMove = Vector3.zero;
+                hitNormal = hit.normal;
+            }
+
+            if (hit.collider == null)
+            {
                 break;
             }
 
-            MoveAlongSurface(move, ref remainingMove, hit, hitNormal);
+            bool canStandOnGround = _groundModule.CanStandOnGround(hit, hitNormal, out _);
+            if (canStandOnGround)
+            {
+                break;
+            }
+
+            remainingMove = Vector3.ProjectOnPlane(remainingMove, hit.normal);
         }
-    }
-
-    protected virtual void MoveAlongSurface(Vector3 originalMove, ref Vector3 remainingMove, RaycastHit hit, Vector3 hitNormal)
-    {
-        if (hit.collider is null || remainingMove == Vector3.zero)
-            return;
-
-        _charCapsule.RecalculateNormalIfZero(hit, ref hitNormal);
-
-        bool canStandOnGround = _groundModule is not null &&
-         _groundModule.CanStandOnGround(hit, hitNormal, out float slopeAngle);
-
-        if (canStandOnGround)
-        {
-            remainingMove = Vector3.zero;
-            return;
-        }
-
-        // hit.normal gives normal respective to capsule's body,
-        // useful for sliding off on corners
-        Vector3 slideMove = Vector3.ProjectOnPlane(remainingMove, hit.normal);
-        if (_curMaintainVelocityAlongSurface)
-        {
-            slideMove = slideMove.normalized * remainingMove.magnitude;
-        }
-
-        remainingMove = slideMove;
     }
 
     protected string _debugModuleName = "Air Module";
@@ -200,32 +90,15 @@ class CharacterMovementAirModule : CharacterMovementModule
     protected CharacterMovementGroundModule _groundModule;
     protected CharacterCapsule _charCapsule;
 
-    protected float _gravityAcceleration;
-    protected float _gravityMaxSpeed;
-    protected float _minMoveDistance;
-    protected float _moveSpeed;
-    protected float _moveAcceleration;
-    protected float _jumpPower;
-    protected uint _maxJumpCount;
     protected Vector3 _charUp;
     protected Vector3 _charRight;
     protected Vector3 _charForward;
     protected Vector3 _velocity;
     protected float _deltaTime;
 
-    protected bool _inputJump;
-
-    protected float _curMinMoveDist = 0;
-    protected float _curMoveSpeed = 0;
-    protected float _curMoveAccel = 0;
-    protected float _curJumpPower = 0;
-    protected float _curStepUpHeight = 0;
-    protected float _curStepDownDepth = 0;
-    protected float _curSlopeUpAngle = 0;
-    protected float _curSlopeDownAngle = 0;
-    protected uint _curJumpCount = 0;
-    protected uint _curMaxJumpCount = 0;
-    protected bool _curMaintainVelocityOnJump = false;
-    protected bool _curMaintainVelocityOnSurface = true;
-    protected bool _curMaintainVelocityAlongSurface = true;
+    protected readonly float _gravityAcceleration;
+    protected readonly float _gravityMaxSpeed;
+    protected readonly float _minMoveDistance;
+    protected readonly float _moveSpeed;
+    protected readonly float _moveAcceleration;
 }
