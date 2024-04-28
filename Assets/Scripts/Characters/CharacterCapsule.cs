@@ -156,19 +156,17 @@ struct CharacterCapsule
 
     public Vector3 CapsuleResolvePenetration()
     {
-        Vector3 resolve = Vector3.zero;
-
         if (skinWidth > 0f)
         {
             VirtualCapsule outerCapsule = GetOuterCapsule();
-            resolve = outerCapsule.ResolvePenetration(collider, COLLISION_OFFSET);
-        }
-        else
-        {
-            resolve = capsule.ResolvePenetration(collider, COLLISION_OFFSET);
+            outerCapsule.ResolvePenetrationInfo(collider, out Vector3 outerResolve, COLLISION_OFFSET);
+            capsule.position += outerResolve;
+            return outerResolve;
         }
 
-        return resolve;
+        capsule.ResolvePenetrationInfo(collider, out Vector3 innerResolve, COLLISION_OFFSET);
+        capsule.position += innerResolve;
+        return innerResolve;
     }
 
     public void TeleportTo(Vector3 pos, Quaternion rot)
