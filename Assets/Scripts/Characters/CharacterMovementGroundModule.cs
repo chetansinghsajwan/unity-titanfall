@@ -21,7 +21,9 @@ class CharacterMovementGroundModule : CharacterMovementModule
         public Vector3 groundPosition;
 
         // the rotation of ground during check
-        public Quaternion groundRotation;
+        public Vector3 groundRotation;
+
+        public bool canStand;
     }
 
     public enum MovementState : byte
@@ -267,34 +269,39 @@ class CharacterMovementGroundModule : CharacterMovementModule
 
             // if angle is 0, we are going in the same direction as the `_charUp`.
             if (angle == 0)
+            {
                 return false;
+            }
 
             _didJump = false;
         }
 
-        _UpdateGroundResult();
+        // check if the ground that we are standing on, moved since the last move.
         Collider groundCollider = _groundResult.hit.collider;
-
-        _baseDeltaPosition = Vector3.zero;
-        _baseDeltaRotation = Vector3.zero;
-
         if (groundCollider != null)
         {
-            _baseDeltaPosition = groundCollider.transform.position - _groundResult.groundPosition;
-            _baseDeltaRotation = groundCollider.transform.rotation.eulerAngles - _groundResult.groundRotation.eulerAngles;
+            _groundDeltaPosition = groundCollider.transform.position - _groundResult.groundPosition;
+            _groundDeltaRotation = groundCollider.transform.rotation.eulerAngles - _groundResult.groundRotation;
+        }
+        else
+        {
+            _groundDeltaPosition = Vector3.zero;
+            _groundDeltaRotation = Vector3.zero;
         }
 
-        if (_baseDeltaPosition != Vector3.zero || _baseDeltaRotation != Vector3.zero)
+        // if the ground moved, then we'll run this module
+        if (_groundDeltaPosition != Vector3.zero || _groundDeltaRotation != Vector3.zero)
         {
             return true;
         }
 
-        return groundCollider != null;
+        _UpdateGroundResult();
+        return _groundResult.canStand;
     }
 
     public override void RunPhysics(out VirtualCapsule result)
     {
-        _RecoverFromBaseMove();
+        _RecoverFromGroundMove();
 
         Vector3 moveInput = new Vector3(_moveVector.x, 0, _moveVector.y);
         moveInput = Quaternion.Euler(0, _charView.turnAngle, 0) * moveInput.normalized;
@@ -364,7 +371,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
                     {
                         // if we cannot step on this _ground, revert the step up
                         // and continue the loop without stepping up this time
-                        if (_CanStandOn(stepUpRecoverHit, stepUpRecoverHitNormal, out float baseAngle) == false)
+                        if (_CanStandOn(stepUpRecoverHit, stepUpRecoverHitNormal, out float groundAngle) == false)
                         {
                             _charCapsule.capsule.position = positionBeforeStepUp;
                             remainingMove = moveBeforeStepUp;
@@ -446,15 +453,15 @@ class CharacterMovementGroundModule : CharacterMovementModule
         return true;
     }
 
-    protected void _RecoverFromBaseMove()
+    protected void _RecoverFromGroundMove()
     {
-        if (_baseDeltaPosition != Vector3.zero)
+        if (_groundDeltaPosition != Vector3.zero)
         {
-            _charCapsule.capsule.position += _baseDeltaPosition;
-            _baseDeltaPosition = Vector3.zero;
+            _charCapsule.capsule.position += _groundDeltaPosition;
+            _groundDeltaPosition = Vector3.zero;
         }
 
-        // TODO: update position for base rotation also
+        // TODO: update position for ground rotation also
     }
 
     protected void _UpdateCapsuleSize()
@@ -502,7 +509,7 @@ class CharacterMovementGroundModule : CharacterMovementModule
 
         result.groundAngle = groundAngle;
         result.groundPosition = hit.collider.transform.position;
-        result.groundRotation = hit.collider.transform.rotation;
+        result.groundRotation = hit.collider.transform.rotation.eulerAngles;
 
         return canStand;
     }
@@ -578,8 +585,8 @@ class CharacterMovementGroundModule : CharacterMovementModule
     protected CharacterView _charView;
     protected CharacterCapsule _charCapsule;
     protected GroundResult _groundResult;
-    protected Vector3 _baseDeltaPosition;
-    protected Vector3 _baseDeltaRotation;
+    protected Vector3 _groundDeltaPosition;
+    protected Vector3 _groundDeltaRotation;
     protected MovementState _movementState;
 
     protected Vector3 _moveVector = Vector3.zero;
